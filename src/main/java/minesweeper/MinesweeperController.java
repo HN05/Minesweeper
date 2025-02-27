@@ -3,8 +3,9 @@ package minesweeper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import minesweeper.model.Cell;
 
-public class MinesweeperController {
+public class MinesweeperController implements BoardListener {
     @FXML
     private TextField firstNumber, secondNumber, operator;
 
@@ -23,5 +24,17 @@ public class MinesweeperController {
             result.setText("Et eller begge tallene er ugyldige");
         } */
     }
+
+	@Override
+	public void updatedCell(Cell cell) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'updatedCell'");
+	}
+
+	@Override
+	public void updatedState() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'updatedState'");
+	}
 
 }
