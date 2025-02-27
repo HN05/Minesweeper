@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import minesweeper.model.Cell;
 
-public class MinesweeperController implements BoardListener {
+public class MinesweeperController implements GameListener {
     @FXML
     private TextField firstNumber, secondNumber, operator;
 
@@ -32,7 +32,7 @@ public class MinesweeperController implements BoardListener {
 	}
 
 	@Override
-	public void updatedState() {
+	public void updatedGameState() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'updatedState'");
 	}

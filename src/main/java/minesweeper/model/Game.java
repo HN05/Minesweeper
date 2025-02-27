@@ -32,7 +32,7 @@ public class Game {
     private void checkIfWon() {
         if (getBombsLeft() == 0) {
             isFinished = true;
-            listener.updatedState();
+            listener.updatedGameState();
         }
     }
 
@@ -61,7 +61,7 @@ public class Game {
         if (cell.isBomb()) {
             hasLost = true;
             isFinished = true;
-            listener.updatedState();
+            listener.updatedGameState();
         } else {
             checkIfWon();
         }

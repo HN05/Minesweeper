@@ -3,21 +3,22 @@ package minesweeper;
 import java.io.FileOutputStream;
 
 import minesweeper.model.Board;
+import minesweeper.model.Game;
 
 import java.io.FileInputStream;
 
 public class FileStorage {
     private FileStorage() {}
 
-    private void storeGrid(long[] grid, String filename) {
+    private void storeBoard(Board board, String filename) {
 
     }
 
-    public void storeLevel(Board level) {
+    public void storeGame(Game game) {
 
     }
 
-    public Board[] fetchLevels() {
-        return new Board[0];
+    public Game[] fetchGames() {
+        return new Game[0];
     }
 }
