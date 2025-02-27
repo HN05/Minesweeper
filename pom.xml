@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
- 
+
     <groupId>com.henriknordvik.minesweeper</groupId>
     <artifactId>minesweeper</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
- 
-    <name>Minesweeper</name>
-	
 
-   <dependencies>
+    <name>Minesweeper</name>
+
+
+    <dependencies>
 
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>23.0.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
@@ -43,51 +44,51 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.10.1</version>
         </dependency>
-  </dependencies>
+    </dependencies>
 
-  <build>
-	<plugins>
-	    <plugin>
-		    <artifactId>maven-compiler-plugin</artifactId>
-		    <version>3.12.1</version>
-		    <configuration>
-		        <release>21</release>
-		    </configuration>
-	    </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+                <configuration>
+                    <release>21</release>
+                </configuration>
+            </plugin>
 
-	    <plugin>
-			<groupId>org.openjfx</groupId>
-			<artifactId>javafx-maven-plugin</artifactId>
-			<version>0.0.8</version>
-			<configuration>
-				<options></options>
-				<mainClass>minesweeper.MinesweeperApp</mainClass>
-				<!-- for jlink -->
-				<compress>2</compress>
-				<noHeaderFiles>true</noHeaderFiles>
-				<stripDebug>true</stripDebug>
-				<noManPages>true</noManPages>
-				<launcher>minesweeper</launcher>
-				<jlinkImageName>minesweeper</jlinkImageName>
-				<jlinkZipName>minesweeper</jlinkZipName>
-			</configuration>
-	    </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <options></options>
+                    <mainClass>minesweeper.MinesweeperApp</mainClass>
+                    <!-- for jlink -->
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <stripDebug>true</stripDebug>
+                    <noManPages>true</noManPages>
+                    <launcher>minesweeper</launcher>
+                    <jlinkImageName>minesweeper</jlinkImageName>
+                    <jlinkZipName>minesweeper</jlinkZipName>
+                </configuration>
+            </plugin>
 
-	    <plugin>
-		    <artifactId>maven-surefire-plugin</artifactId>
-		    <version>3.2.5</version>
-		    <configuration>
-			    <argLine>--enable-preview</argLine>
-		    </configuration>
-	    </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
+            </plugin>
 
-	    <plugin>
-		    <artifactId>maven-failsafe-plugin</artifactId>
-		    <version>3.2.5</version>
-		    <configuration>
-			    <argLine>--enable-preview</argLine>
-		    </configuration>
-	    </plugin>
-	</plugins>
-  </build>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
