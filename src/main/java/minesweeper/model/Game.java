@@ -39,12 +39,14 @@ public class Game {
     private short combinePos(final int x, final int y, final boolean isMark) {
         // Left-shift mark so that it is first bit
         final short mark_value = (short) (isMark ? 1 << 15 : 0);
-        // First truncate x to 6 bits (just in case)
-        // Then left-shift to take up second to 7th bit
-        final short x_value = (short) ((x & 0x3F) << 9);
-        // First truncate y to 6 bits (just in case)
-        // Then left-shift to take up 8th to 13th bit
-        final short y_value = (short) ((y & 0x3F) << 3);
+
+        // Second bit is left empty in case of new flag
+
+        // First truncate x to 7 bits (just in case)
+        // Then left-shift to take up third to 9th bit
+        final short x_value = (short) ((x & 0x7F) << 7);
+        // Truncate y to 7 bits (just in case)
+        final short y_value = (short) ((y & 0x7F));
         // Use bitwise or to combine all the values
         return (short) (mark_value | x_value | y_value);
     }
