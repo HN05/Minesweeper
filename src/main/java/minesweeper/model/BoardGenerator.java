@@ -1,78 +1,111 @@
 package minesweeper.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class BoardGenerator {
-    private BoardGenerator() {}
-
-    // each element is a row, and the bits in the element correspond to 0 = no bomb
-    // 1 = bomb
-    // the first square in the row is the last bit in the row int
-    private static long[] generateGrid(final int rowCount, final int colCount, final double bombChance) {
-        if (colCount > 64 || rowCount > 64) {
-            throw new IllegalArgumentException("Too many rows/columns max 64");
-        }
-        if (bombChance <= 0 || bombChance >= 1) {
-            throw new IllegalArgumentException("bombChance must be between 0 and 1");
-        }
-        final Random rand = new Random();
-        long[] rows = new long[rowCount + 1];
-        rows[0] = colCount;
-        for (int y = 1; y < rows.length; y++) {
-            long row = 0;
-            for (int x = 0; x < colCount; x++) {
-                if (rand.nextDouble() < bombChance) {
-                    // Shifts 1 'x' bits to the left
-                    // Use bitwise or to make that bit 1 in 'row'
-                    row |= (1L << x);
-                }
-            }
-            rows[y] = row;
-        }
-        return rows;
+    private BoardGenerator() {
     }
 
-    private static Cell[][] generateCells(final long[] grid) {
-        final int colCount = (int) grid[0];
-        final int rowCount = grid.length - 1;
+    private static int[] generateBitGrid(final int rowCount, final int colCount, int bombCount) {
+        if (colCount < 1 || rowCount < 1) {
+            throw new IllegalArgumentException("colCount and rowCount must be greater than 0");
+        }
+        if (colCount > 128 || rowCount > 128) {
+            throw new IllegalArgumentException("Too many rows/columns max 128");
+        }
+        if (bombCount < 1) {
+            throw new IllegalArgumentException("bombCount must be between greater than 0");
+        }
 
-        Cell[][] cells = new Cell[rowCount][colCount];
+        final Random rand = new Random();
+        final int arrayCount = (int) Math.ceil((double) rowCount * colCount / 32);
+        int[] data = new int[arrayCount + 1];
 
-        for (int y = 1; y < grid.length; y++) {
-            final long row = grid[y];
+        data[0] = (colCount << 16) | rowCount; // store metadata as first int
+
+        int nextInt = 0;
+        int nextIndex = 1;
+        for (int y = 0; y < rowCount; y++) {
             for (int x = 0; x < colCount; x++) {
-                // Shift the int to the right so that the first bit is the x'th bit
-                // Extract the least significant bit
-                // Check if it is equal to 1
-                final boolean isBomb = ((row >> x) & 1L) == 1;
-                final Cell cell = new Cell(x, y, isBomb);
-                cells[y-1][x] = cell;
+                final int cellCount = y * colCount + x;
+                nextInt <<= 1;
+
+                if (rand.nextDouble() <= (double) bombCount / (rowCount * colCount - cellCount)) {
+                    nextInt += 1;
+                    bombCount--;
+                }
+
+                if ((cellCount % 32) == 31) {
+                    data[nextIndex] = nextInt;
+                    nextInt = 0;
+                    nextIndex++;
+                }
             }
         }
-        
-        // Calculate nearby bombs
+        if (nextInt != 0) {
+            data[nextIndex] = nextInt;
+        }
+
+        return data;
+    }
+
+    private static Cell[][] generateCells(final int[] bitGrid) {
+        final int metadata = bitGrid[0];
+        final int colCount = metadata >>> 16; // get first 16 bits (from left)
+        final int rowCount = metadata & 0xFFFF; // get last 16 bits (from left)
+
+        final Cell[][] cells = new Cell[rowCount][colCount];
+        final List<Integer> bombs = new ArrayList<>();
+
+        int nextInt = bitGrid[1];
         for (int y = 0; y < rowCount; y++) {
-            for (int x = 0; x < colCount; x++) { 
-                if (!cells[y][x].isBomb()) continue;
-                for (int i = -1; i <= 1; i++) {
+            for (int x = 0; x < colCount; x++) {
+                // Extract the least significant bit
+                // Check if it is equal to 1
+                final boolean isBomb = ((nextInt >>> 31) & 1L) == 1;
+                final Cell cell = new Cell(x, y, isBomb);
+                cells[y][x] = cell;
 
-                    final int increment = i == 0 ? 2 : 1; // make sure to skip (0,0)
-                    for (int j = -1; j <= 1; j += increment) {
-                        final int new_x = x + i;
-                        final int new_y = y + j;
+                if (isBomb) {
+                    bombs.add(x);
+                    bombs.add(y);
+                }
 
-                        if (new_x < 0 || new_x >= colCount) continue;
-                        if (new_y < 0 || new_y >= rowCount) continue;
+                final int cellCount = y * colCount + x;
+                if ((cellCount % 32) == 31) {
+                    nextInt = bitGrid[(cellCount+1) / 32 + 1];
+                } else {
+                    nextInt <<= 1;
+                }
+            }
+        }
 
-                        cells[new_y][new_x].incrementNearbyBombs();
-                    }
+        // Calculate nearby bombs
+        for (int n = 0; n < bombs.size(); n += 2) {
+            final int x = bombs.get(n);
+            final int y = bombs.get(n + 1);
+
+            for (int i = -1; i <= 1; i++) {
+                final int increment = i == 0 ? 2 : 1; // make sure to skip (0,0)
+                for (int j = -1; j <= 1; j += increment) {
+                    final int new_x = x + i;
+                    final int new_y = y + j;
+
+                    if (new_x < 0 || new_x >= colCount)
+                        continue;
+                    if (new_y < 0 || new_y >= rowCount)
+                        continue;
+
+                    cells[new_y][new_x].incrementNearbyBombs();
                 }
             }
         }
         return cells;
     }
 
-    public Cell[][] generateCells(final int rowCount, final int colCount, final double bombChance) {
-        return generateCells(generateGrid(rowCount, colCount, bombChance));
+    public Cell[][] generateCells(final int rowCount, final int colCount, final int bombCount) {
+        return generateCells(generateBitGrid(rowCount, colCount, bombCount));
     }
 }
