@@ -24,6 +24,14 @@ public class Board {
         return bombCount;
     }
 
+    public int getColCount() {
+        return cells[0].length;
+    }
+
+    public int getRowCount() {
+        return cells.length;
+    }
+
     public Cell get(int x, int y) {
         return cells[y][x];
     }
