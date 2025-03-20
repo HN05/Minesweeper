@@ -4,67 +4,118 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class BoardGenerator {
+// Public funcs use short for colCount and rowCount to ensure correct size
+// Private funcs use int for efficiency
+public final class BoardGenerator {
     private BoardGenerator() {
     }
 
-    private static int[] generateBitGrid(final int rowCount, final int colCount, int bombCount) {
-        if (colCount < 1 || rowCount < 1) {
-            throw new IllegalArgumentException("colCount and rowCount must be greater than 0");
-        }
-        if (colCount > 128 || rowCount > 128) {
-            throw new IllegalArgumentException("Too many rows/columns max 128");
-        }
-        if (bombCount < 1) {
-            throw new IllegalArgumentException("bombCount must be between greater than 0");
-        }
+    private static Random rand = new Random();
 
-        final Random rand = new Random();
-        final int arrayCount = (int) Math.ceil((double) rowCount * colCount / 32);
-        int[] data = new int[arrayCount + 1];
+    private static int arrayCount(final int rowCount, final int colCount) {
+        // Metadata takes four bytes (2 for each short)
+        // Calculate total amount of cells
+        // Each byte can store 8 cells
+        // Round up
+        return 4 + (int) Math.ceil((double) rowCount * colCount / 8);
+    }
 
-        data[0] = (colCount << 16) | rowCount; // store metadata as first int
+    private static void storeMetadata(byte[] array, final int rowCount, final int colCount) {
+        // Store first 8 bits of colCount
+        array[0] = (byte) (colCount >>> 8);
+        // Store last 8 bits of colCount
+        array[1] = (byte) colCount;
+        // Same for rowCount
+        array[2] = (byte) (rowCount >>> 8);
+        array[3] = (byte) rowCount;
+    }
 
-        int nextInt = 0;
-        int nextIndex = 1;
+    @FunctionalInterface
+    private interface BombCalc {
+        public boolean isBomb(int x, int y);
+    }
+
+    private static byte[] byteGridHelper(final int rowCount, final int colCount, BombCalc bombCalc) {
+        byte[] data = new byte[arrayCount(rowCount, colCount)];
+        storeMetadata(data, rowCount, colCount);
+
+        byte nextByte = 0;
+        int nextIndex = 4;
         for (int y = 0; y < rowCount; y++) {
             for (int x = 0; x < colCount; x++) {
                 final int cellCount = y * colCount + x;
-                nextInt <<= 1;
+                nextByte <<= 1;
 
-                if (rand.nextDouble() <= (double) bombCount / (rowCount * colCount - cellCount)) {
-                    nextInt += 1;
-                    bombCount--;
+                if (bombCalc.isBomb(x, y)) {
+                    nextByte += 1;
                 }
 
-                if ((cellCount % 32) == 31) {
-                    data[nextIndex] = nextInt;
-                    nextInt = 0;
+                if ((cellCount % 8) == 7) {
+                    data[nextIndex] = nextByte;
+                    nextByte = 0;
                     nextIndex++;
                 }
             }
         }
-        if (nextInt != 0) {
-            data[nextIndex] = nextInt;
+        if (nextByte != 0) {
+            data[nextIndex] = nextByte;
         }
 
         return data;
     }
 
-    private static Cell[][] generateCells(final int[] bitGrid) {
-        final int metadata = bitGrid[0];
-        final int colCount = metadata >>> 16; // get first 16 bits (from left)
-        final int rowCount = metadata & 0xFFFF; // get last 16 bits (from left)
+    private static byte[] generateByteGrid(final short rowCount, final short colCount, int bombCount) {
+        if (colCount < 1 || rowCount < 1) {
+            throw new IllegalArgumentException("colCount and rowCount must be greater than 0");
+        }
+        if (bombCount < 1) {
+            throw new IllegalArgumentException("bombCount must be between greater than 0");
+        }
+
+        byte[] data = new byte[arrayCount(rowCount, colCount)];
+
+        // store metadata as first 4 bytes
+        storeMetadata(data, rowCount, colCount);
+
+        byte nextByte = 0;
+        int nextIndex = 4;
+        for (int y = 0; y < rowCount; y++) {
+            for (int x = 0; x < colCount; x++) {
+                final int cellCount = y * colCount + x;
+                nextByte <<= 1;
+
+                if (rand.nextDouble() <= (double) bombCount / (rowCount * colCount - cellCount)) {
+                    nextByte += 1;
+                    bombCount--;
+                }
+
+                if ((cellCount % 8) == 7) {
+                    data[nextIndex] = nextByte;
+                    nextByte = 0;
+                    nextIndex++;
+                }
+            }
+        }
+        if (nextByte != 0) {
+            data[nextIndex] = nextByte;
+        }
+
+        return data;
+    }
+
+    public static Cell[][] generateCells(final byte[] byteGrid) {
+        final short colCount = (short) (byteGrid[0] << 8 + byteGrid[1]);
+        final short rowCount = (short) (byteGrid[2] << 8 + byteGrid[3]);
 
         final Cell[][] cells = new Cell[rowCount][colCount];
         final List<Integer> bombs = new ArrayList<>();
 
-        int nextInt = bitGrid[1];
+        byte nextByte = byteGrid[4];
         for (int y = 0; y < rowCount; y++) {
             for (int x = 0; x < colCount; x++) {
                 // Extract the least significant bit
                 // Check if it is equal to 1
-                final boolean isBomb = ((nextInt >>> 31) & 1L) == 1;
+                final boolean isBomb = ((nextByte >>> 7) & 1L) == 1;
                 final Cell cell = new Cell(x, y, isBomb);
                 cells[y][x] = cell;
 
@@ -74,10 +125,10 @@ public class BoardGenerator {
                 }
 
                 final int cellCount = y * colCount + x;
-                if ((cellCount % 32) == 31) {
-                    nextInt = bitGrid[(cellCount+1) / 32 + 1];
+                if ((cellCount % 8) == 7) {
+                    nextByte = byteGrid[(cellCount + 1) / 8 + 1];
                 } else {
-                    nextInt <<= 1;
+                    nextByte <<= 1;
                 }
             }
         }
@@ -105,7 +156,15 @@ public class BoardGenerator {
         return cells;
     }
 
-    public Cell[][] generateCells(final int rowCount, final int colCount, final int bombCount) {
-        return generateCells(generateBitGrid(rowCount, colCount, bombCount));
+    public static Cell[][] generateCells(final short rowCount, final short colCount, final int bombCount) {
+        return generateCells(generateByteGrid(rowCount, colCount, bombCount));
+    }
+
+    public static byte[] convertToBytes(final Cell[][] cells) {
+        final int rowCount = cells.length;
+        final int colCount = cells[0].length;
+
+        return byteGridHelper(rowCount, colCount, (x, y) -> cells[y][x].isBomb());
+
     }
 }

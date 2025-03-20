@@ -5,7 +5,7 @@ import java.util.List;
 
 import minesweeper.GameListener;
 
-final public class Game {
+public final class Game {
     private final Board board;
     private final GameListener listener;
     private final ActionList actions;
@@ -35,6 +35,10 @@ final public class Game {
 
     public int getBombsLeft() {
         return board.getBombCount() - markCount;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     private void checkIfWon() {
@@ -72,8 +76,12 @@ final public class Game {
         listener.updatedCell(cell);
     }
 
-    final public class ActionList {
-        private final List<Integer> actions;
+    public byte[] convertToBytes() {
+        return new byte[0];
+    }
+
+    public final class ActionList {
+        private final List<Byte> actions;
         private final int bitRowSize;
         private final int bitColSize;
         private final int chunkSize;
@@ -87,8 +95,10 @@ final public class Game {
             this.bitRowSize = requiredSize(rowSize);
             this.chunkSize = bitRowSize + bitColSize + 1;
             this.actions = new ArrayList<>();
-            final int metadata = rowSize << 16 | colSize;
-            actions.add(metadata);
+            actions.add((byte) (colSize >>> 8));
+            actions.add((byte) (colSize));
+            actions.add((byte) (rowSize >>> 8));
+            actions.add((byte) (rowSize));
         }
 
         // public ActionList(final int[] bitData) {
@@ -109,14 +119,14 @@ final public class Game {
             int left = chunkSize;
             int bitNum = 32 + left * chunkCount;
             while (left > 0) {
-                final int num = bitNum % 32;
-                final int intIndex = bitNum / 32;
+                final int num = bitNum % 8;
+                final int byteIndex = bitNum / 8;
 
                 // check if need to add int
                 if (num == 0) {
-                    actions.add(0);
+                    actions.add((byte) 0);
                 }
-                int val = actions.get(intIndex);
+                byte val = actions.get(byteIndex);
                 val <<= 1;
                 int bit = 0;
 
@@ -127,9 +137,9 @@ final public class Game {
                 } else {
                     bit = x >>> left - 1 - bitRowSize;
                 }
-                val |= (bit) << (31-num);
+                val |= (bit) << (7-num);
 
-                actions.set(intIndex, val);
+                actions.set(byteIndex, val);
 
                 left--;
                 bitNum++;

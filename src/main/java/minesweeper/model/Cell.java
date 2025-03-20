@@ -1,6 +1,6 @@
 package minesweeper.model;
 
-public class Cell {
+public final class Cell {
     private final int x;
     private final int y;
     private final boolean isBomb;

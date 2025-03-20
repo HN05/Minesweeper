@@ -1,14 +1,22 @@
 package minesweeper.model;
 
+import java.nio.file.FileStore;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class Board {
+import minesweeper.FileStorage;
+
+public final class Board {
     private final Cell[][] cells;
     private final int bombCount;
+    private final int id;
 
     public Board(final Cell[][] cells) {
+        this(cells, FileStorage.getNewBoardID());
+    }
+
+    public Board(final Cell[][] cells, final int id) {
         Objects.requireNonNull(cells);
         if (cells.length == 0) throw new IllegalArgumentException("Can not be empty board");
         this.cells = cells;
@@ -18,6 +26,7 @@ public class Board {
             .count();
 
         this.bombCount = (int) bombCount;
+        this.id = id;
     }
 
     public int getBombCount() {
@@ -31,6 +40,10 @@ public class Board {
     public int getRowCount() {
         return cells.length;
     }
+    
+    public Cell[][] getCells() {
+        return this.cells;
+    }
 
     public Cell get(int x, int y) {
         return cells[y][x];
@@ -42,6 +55,10 @@ public class Board {
 
     public Stream<Cell> flatStream() {
         return stream().flatMap(Arrays::stream);
+    }
+
+    public int getID() {
+        return id;
     }
 
 }
