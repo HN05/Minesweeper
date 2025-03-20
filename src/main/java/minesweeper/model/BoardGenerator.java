@@ -32,24 +32,28 @@ public final class BoardGenerator {
 
     @FunctionalInterface
     private interface BombCalc {
-        public boolean isBomb(int x, int y);
+        public boolean isBomb(int x, int y, int bombCount);
     }
 
-    private static byte[] byteGridHelper(final int rowCount, final int colCount, BombCalc bombCalc) {
+    private static byte[] byteGridHelper(final int rowCount, final int colCount, final BombCalc bombCalc) {
         byte[] data = new byte[arrayCount(rowCount, colCount)];
         storeMetadata(data, rowCount, colCount);
 
         byte nextByte = 0;
-        int nextIndex = 4;
+        int nextIndex = 4; // start after metadata
+        int bombCount = 0;
         for (int y = 0; y < rowCount; y++) {
             for (int x = 0; x < colCount; x++) {
-                final int cellCount = y * colCount + x;
-                nextByte <<= 1;
+                nextByte <<= 1; // shift all bits to left to make room for new bit
 
-                if (bombCalc.isBomb(x, y)) {
+                if (bombCalc.isBomb(x, y, bombCount)) {
+                    // If bomb make the last bit a one
                     nextByte += 1;
+                    bombCount++;
                 }
 
+                final int cellCount = y * colCount + x;
+                // Triggers every 8 bits (when byte is full)
                 if ((cellCount % 8) == 7) {
                     data[nextIndex] = nextByte;
                     nextByte = 0;
@@ -64,43 +68,18 @@ public final class BoardGenerator {
         return data;
     }
 
-    private static byte[] generateByteGrid(final short rowCount, final short colCount, int bombCount) {
+    public static byte[] generateByteGrid(final short rowCount, final short colCount, final int totalBombCount) {
         if (colCount < 1 || rowCount < 1) {
             throw new IllegalArgumentException("colCount and rowCount must be greater than 0");
         }
-        if (bombCount < 1) {
+        if (totalBombCount < 1) {
             throw new IllegalArgumentException("bombCount must be between greater than 0");
         }
 
-        byte[] data = new byte[arrayCount(rowCount, colCount)];
-
-        // store metadata as first 4 bytes
-        storeMetadata(data, rowCount, colCount);
-
-        byte nextByte = 0;
-        int nextIndex = 4;
-        for (int y = 0; y < rowCount; y++) {
-            for (int x = 0; x < colCount; x++) {
-                final int cellCount = y * colCount + x;
-                nextByte <<= 1;
-
-                if (rand.nextDouble() <= (double) bombCount / (rowCount * colCount - cellCount)) {
-                    nextByte += 1;
-                    bombCount--;
-                }
-
-                if ((cellCount % 8) == 7) {
-                    data[nextIndex] = nextByte;
-                    nextByte = 0;
-                    nextIndex++;
-                }
-            }
-        }
-        if (nextByte != 0) {
-            data[nextIndex] = nextByte;
-        }
-
-        return data;
+        return byteGridHelper(rowCount, colCount, (x, y, bombCount) -> {
+            final int remainingCells = rowCount*colCount - (y*colCount + x);
+            return rand.nextDouble() <= (double) (totalBombCount - bombCount) / remainingCells;
+        });
     }
 
     public static Cell[][] generateCells(final byte[] byteGrid) {
@@ -108,14 +87,19 @@ public final class BoardGenerator {
         final short rowCount = (short) (byteGrid[2] << 8 + byteGrid[3]);
 
         final Cell[][] cells = new Cell[rowCount][colCount];
+
+        // Stores coordinates of bombs for later calc
+        // Each bomb gets two entries, one for x and one for y
+        // Example: [x1, y1, x2, y2, x3, y3]
         final List<Integer> bombs = new ArrayList<>();
 
-        byte nextByte = byteGrid[4];
+        byte workingByte = byteGrid[4]; // start at 4 due to metadata
         for (int y = 0; y < rowCount; y++) {
             for (int x = 0; x < colCount; x++) {
+                // Move the first bit into last place
                 // Extract the least significant bit
                 // Check if it is equal to 1
-                final boolean isBomb = ((nextByte >>> 7) & 1L) == 1;
+                final boolean isBomb = ((workingByte >>> 7) & 1L) == 1;
                 final Cell cell = new Cell(x, y, isBomb);
                 cells[y][x] = cell;
 
@@ -125,10 +109,14 @@ public final class BoardGenerator {
                 }
 
                 final int cellCount = y * colCount + x;
+                // triggers every 8 bits when byte has been calculated
                 if ((cellCount % 8) == 7) {
-                    nextByte = byteGrid[(cellCount + 1) / 8 + 1];
+                    // +1 to cellCount since it is 0-indexed
+                    // +4 for metadata
+                    workingByte = byteGrid[(cellCount + 1) / 8 + 4];
                 } else {
-                    nextByte <<= 1;
+                    // Move next bit to first position 
+                    workingByte <<= 1;
                 }
             }
         }
@@ -138,12 +126,16 @@ public final class BoardGenerator {
             final int x = bombs.get(n);
             final int y = bombs.get(n + 1);
 
+            // Needs to update all cells in 3x3 grid except for itself
+            // Moves in -1 or 1 in every direction
+            // Can think of it like coordinate system with start at -1 and end at 1
             for (int i = -1; i <= 1; i++) {
                 final int increment = i == 0 ? 2 : 1; // make sure to skip (0,0)
                 for (int j = -1; j <= 1; j += increment) {
                     final int new_x = x + i;
                     final int new_y = y + j;
 
+                    // Out of bounds checks
                     if (new_x < 0 || new_x >= colCount)
                         continue;
                     if (new_y < 0 || new_y >= rowCount)
@@ -164,7 +156,6 @@ public final class BoardGenerator {
         final int rowCount = cells.length;
         final int colCount = cells[0].length;
 
-        return byteGridHelper(rowCount, colCount, (x, y) -> cells[y][x].isBomb());
-
+        return byteGridHelper(rowCount, colCount, (x, y, z) -> cells[y][x].isBomb());
     }
 }
