@@ -1,6 +1,6 @@
 package minesweeper;
 
-
+import minesweeper.model.ActionList;
 import minesweeper.model.Board;
 import minesweeper.model.BoardGenerator;
 import minesweeper.model.Game;
@@ -15,7 +15,9 @@ import java.time.LocalDate;
 
 public class FileStorage {
     private static final String storage = "storage/";
-    private FileStorage() {}
+
+    private FileStorage() {
+    }
 
     public static int getNewBoardID() {
         final File folder = new File(storage);
@@ -55,30 +57,35 @@ public class FileStorage {
         }
     }
 
-    public static Board fetchBoard(final int id) throws IOException {
-        final String path = storage + id + "/board.bin";
+    private static byte[] getBytes(final String path) throws IOException {
         final File file = new File(path);
         if (!file.exists()) {
             throw new FileNotFoundException(path);
         }
-        
+
         byte[] data = null;
         try (final FileInputStream in = new FileInputStream(file)) {
             data = in.readAllBytes();
         }
-        return new Board(BoardGenerator.generateCells(data), id);   
+        return data;
+    }
+
+    public static Board fetchBoard(final int id) throws IOException {
+        final String path = storage + id + "/board.bin";
+        return new Board(BoardGenerator.generateCells(getBytes(path)), id);
+    }
+
+    public static Game fetchGame(final String date, final int board) throws IOException {
+        final String path = storage + board + "/" + date + ".bin";
+        return new Game(fetchBoard(board), new ActionList(getBytes(path)));
     }
 
     public static int[] fetchBoardIDs() throws IOException {
-
+        return new int[0];
     }
-
 
     public static String[] fetchGames(final int boardID) {
         return new String[0];
     }
 
-    public static Game fetchGame(final String name) {
-        return null;
-    }  
 }

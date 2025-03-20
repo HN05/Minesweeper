@@ -1,24 +1,25 @@
 package minesweeper.model;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import minesweeper.GameListener;
 
 public final class Game {
     private final Board board;
-    private final GameListener listener;
+    private final Collection<GameListener> listeners = new HashSet<>();
     private final ActionList actionList;
     private int markCount = 0;
     private boolean isFinished = false;
     private boolean hasLost = false;
 
-    public Game(final Board board, final GameListener listener) {
+    public Game(final Board board) {
         this.board = board;
-        this.listener = listener;
         this.actionList = new ActionList((short) board.getRowCount(), (short) board.getColCount());
     }
 
-    public Game(final Board board, final GameListener listener, final ActionList actionList) {
+    public Game(final Board board, final ActionList actionList) {
         this.board = board;
-        this.listener = listener;
         this.actionList = actionList;
         this.actionList.forEachAction(this::executeAction);
     }
@@ -51,10 +52,30 @@ public final class Game {
         return actionList;
     }
 
+    public void addListener(final GameListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(final GameListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void updatedGameState() {
+        for (GameListener listener : listeners) {
+            listener.updatedGameState();
+        }
+    }
+
+    private void updatedCell(final Cell cell) {
+        for (GameListener listener : listeners) {
+            listener.updatedCell(cell);
+        }
+    }
+
     private void checkIfWon() {
         if (getBombsLeft() == 0) {
             isFinished = true;
-            listener.updatedGameState();
+            updatedGameState();
         }
     }
 
@@ -68,11 +89,11 @@ public final class Game {
         if (cell.isBomb()) {
             hasLost = true;
             isFinished = true;
-            listener.updatedGameState();
+            updatedGameState();
         } else {
             checkIfWon();
         }
-        listener.updatedCell(cell);
+        updatedCell(cell);
     }
 
     public void mark(final int x, final int y) {
@@ -83,6 +104,6 @@ public final class Game {
         cell.markCell();
         actionList.addAction(new Action(x, y, ActionType.MARK));
         markCount++;
-        listener.updatedCell(cell);
+        updatedCell(cell);
     }
 }
