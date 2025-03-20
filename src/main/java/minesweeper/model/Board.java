@@ -1,6 +1,5 @@
 package minesweeper.model;
 
-import java.nio.file.FileStore;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;

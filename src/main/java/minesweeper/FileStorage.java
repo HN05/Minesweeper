@@ -40,7 +40,7 @@ public class FileStorage {
         }
     }
 
-    public static void storeGame(Game game) throws IOException {
+    public static void storeGame(final Game game) throws IOException {
         final Board board = game.getBoard();
         storeBoard(board);
         final LocalDate date = LocalDate.now();
@@ -49,13 +49,13 @@ public class FileStorage {
         if (file.exists()) {
             throw new FileAlreadyExistsException(path);
         }
-        final byte[] data = game.convertToBytes();
+        final byte[] data = game.getActionList().getByteData();
         try (final FileOutputStream out = new FileOutputStream(file)) {
             out.write(data);
         }
     }
 
-    private static Board fetchBoard(int id) throws IOException {
+    public static Board fetchBoard(final int id) throws IOException {
         final String path = storage + id + "/board.bin";
         final File file = new File(path);
         if (!file.exists()) {
@@ -69,15 +69,16 @@ public class FileStorage {
         return new Board(BoardGenerator.generateCells(data), id);   
     }
 
-    public static Board[] fetchBoards() {
-        return null;
-    } 
+    public static int[] fetchBoardIDs() throws IOException {
 
-    public static String[] fetchGames(int boardID) {
+    }
+
+
+    public static String[] fetchGames(final int boardID) {
         return new String[0];
     }
 
-    public static Game fetchGame() {
+    public static Game fetchGame(final String name) {
         return null;
     }  
 }
