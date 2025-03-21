@@ -74,7 +74,7 @@ public final class ActionList {
             if (left == chunkSize) {
                 // Bit is type
                 bit = action.type().isMark() ? 1 : 0;
-            } else if (left > bitColSize) {
+            } else if (left > bitRowSize) {
                 // Bit is part of x coord
                 bit = action.x() >>> bitColSize - (chunkSize - left);
             } else {
