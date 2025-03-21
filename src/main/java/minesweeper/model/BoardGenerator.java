@@ -16,8 +16,8 @@ public final class BoardGenerator {
         // Metadata takes four bytes (2 for each short)
         // Calculate total amount of cells
         // Each byte can store 8 cells
-        // Round up
-        return 4 + (int) Math.ceil((double) rowCount * colCount / 8);
+        // Round up by adding 7
+        return 4 + (rowCount * colCount + 7) / 8;
     }
 
     private static void storeMetadata(byte[] array, final int rowCount, final int colCount) {

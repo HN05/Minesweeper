@@ -27,13 +27,18 @@ public final class ActionList {
     }
 
     public ActionList(final byte[] byteData) {
-        bitColSize = requiredSize(byteData[0] << 8 + byteData[1]);
-        bitRowSize = requiredSize(byteData[2] << 8 + byteData[3]);
+        bitColSize = requiredSize((usign(byteData[0]) << 8) + usign(byteData[1]));
+        bitRowSize = requiredSize((usign(byteData[2]) << 8) + usign(byteData[3]));
         chunkSize = bitRowSize + bitColSize + 1;
         actions = new ArrayList<>();
         for (byte element : byteData) {
             actions.add(element);
         }
+    }
+    
+    // returns an int that is unsigned
+    private int usign(final byte val) {
+        return val & 0xFF; // 0xFF = 1111 1111
     }
 
     private int requiredSize(final int value) {
@@ -90,32 +95,38 @@ public final class ActionList {
 
     public byte[] getByteData() {
         byte[] data = new byte[actions.size()];
-        for (int i = 0; i <= data.length; i++) {
+        for (int i = 0; i < data.length; i++) {
             data[i] = actions.get(i);
         }
         return data;
     }
 
     private int extract(final int startBit, final int length) {
-        int num = startBit % 8; // Pos in the byte
-        int requiredBytes = (num + startBit - length) / 8;
-        int byteIndex = startBit / 8; // Index of the byte
-        int val = 0;
-        
-        while (requiredBytes > 0) {
-            final byte workingByte = actions.get(byteIndex);
+        int result = 0;
+        int byteIndex = startBit / 8;
+        int bitOffset = startBit % 8;
+        int bitsRemaining = length;
 
-            // TODO: Extract byte
+        while (bitsRemaining > 0) {
+            // make sure it is unsigned
+            final int currentByte = usign(actions.get(byteIndex));
+            final int bitsAvailable = 8 - bitOffset;
+            final int bitsToExtract = Math.min(bitsRemaining, bitsAvailable);
+            final int mask = (1 << bitsToExtract) - 1;
+            // Align the bits to the right end and mask off unwanted bits.
+            final int bits = (currentByte >>> (bitsAvailable - bitsToExtract)) & mask;
+            result = (result << bitsToExtract) | bits;
 
+            bitsRemaining -= bitsToExtract;
+            bitOffset = 0; // only first byte can have an offset
             byteIndex++;
-            requiredBytes--;
         }
-        return val;
+        return result;
     }
 
     public void forEachAction(Consumer<Action> consumer) {
         for (int i = 0; i < chunkCount; i++) {
-            int bitNum = 32 + i + chunkSize;
+            int bitNum = 32 + i * chunkSize;
             final boolean isMark = extract(bitNum, 1) == 1;
             bitNum++;
 
