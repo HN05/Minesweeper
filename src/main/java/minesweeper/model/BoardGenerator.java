@@ -77,14 +77,19 @@ public final class BoardGenerator {
         }
 
         return byteGridHelper(rowCount, colCount, (x, y, bombCount) -> {
-            final int remainingCells = rowCount*colCount - (y*colCount + x);
+            final int remainingCells = rowCount * colCount - (y * colCount + x);
             return rand.nextDouble() <= (double) (totalBombCount - bombCount) / remainingCells;
         });
     }
 
+    // returns an int that is unsigned
+    private static int usign(final byte val) {
+        return val & 0xFF; // 0xFF = 1111 1111
+    }
+
     public static Cell[][] generateCells(final byte[] byteGrid) {
-        final short colCount = (short) (byteGrid[0] << 8 + byteGrid[1]);
-        final short rowCount = (short) (byteGrid[2] << 8 + byteGrid[3]);
+        final short colCount = (short) ((usign(byteGrid[0]) << 8) + usign(byteGrid[1]));
+        final short rowCount = (short) ((usign(byteGrid[2]) << 8) + usign(byteGrid[3]));
 
         final Cell[][] cells = new Cell[rowCount][colCount];
 
@@ -115,7 +120,7 @@ public final class BoardGenerator {
                     // +4 for metadata
                     workingByte = byteGrid[(cellCount + 1) / 8 + 4];
                 } else {
-                    // Move next bit to first position 
+                    // Move next bit to first position
                     workingByte <<= 1;
                 }
             }
