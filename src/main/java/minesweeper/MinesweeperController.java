@@ -26,7 +26,7 @@ public class MinesweeperController implements GameListener {
     }
 
 	@Override
-	public void updatedCell(Cell cell) {
+	public void updatedCell(final Cell cell) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'updatedCell'");
 	}

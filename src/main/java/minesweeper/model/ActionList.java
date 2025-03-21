@@ -96,19 +96,32 @@ public final class ActionList {
         return data;
     }
 
+    private int extract(final int startBit, final int length) {
+        int num = startBit % 8; // Pos in the byte
+        int requiredBytes = (num + startBit - length) / 8;
+        int byteIndex = startBit / 8; // Index of the byte
+        int val = 0;
+        
+        while (requiredBytes > 0) {
+            final byte workingByte = actions.get(byteIndex);
+
+            // TODO: Extract byte
+
+            byteIndex++;
+            requiredBytes--;
+        }
+        return val;
+    }
+
     public void forEachAction(Consumer<Action> consumer) {
         for (int i = 0; i < chunkCount; i++) {
             int bitNum = 32 + i + chunkSize;
-            final int num = bitNum % 8; // Pos in the byte
-            final int byteIndex = bitNum / 8; // Index of the byte
-
-            final byte workingByte = actions.get(byteIndex);
-            final boolean isMark = ((workingByte >>> (7 - num)) & 1L) == 1;
+            final boolean isMark = extract(bitNum, 1) == 1;
             bitNum++;
 
-            // TODO: Extract x and y from bit stream
-            int x = 0;
-            int y = 0;
+            final int x = extract(bitNum, bitColSize);
+            bitNum += bitColSize;
+            final int y = extract(bitNum, bitRowSize);
 
             final Action action = new Action(x, y, ActionType.get(isMark));
             consumer.accept(action);

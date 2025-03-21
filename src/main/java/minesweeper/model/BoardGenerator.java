@@ -99,7 +99,7 @@ public final class BoardGenerator {
                 // Move the first bit into last place
                 // Extract the least significant bit
                 // Check if it is equal to 1
-                final boolean isBomb = ((workingByte >>> 7) & 1L) == 1;
+                final boolean isBomb = ((workingByte >>> 7) & 1) == 1;
                 final Cell cell = new Cell(x, y, isBomb);
                 cells[y][x] = cell;
 
