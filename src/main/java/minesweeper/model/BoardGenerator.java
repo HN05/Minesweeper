@@ -35,7 +35,9 @@ public final class BoardGenerator {
         public boolean isBomb(int x, int y, int bombCount);
     }
 
-    private static byte[] byteGridHelper(final int rowCount, final int colCount, final BombCalc bombCalc) {
+    private static byte[] byteGridHelper(final short srowCount, final short scolCount, final BombCalc bombCalc) {
+        final int rowCount = usign(srowCount);
+        final int colCount = usign(scolCount);
         byte[] data = new byte[arrayCount(rowCount, colCount)];
         storeMetadata(data, rowCount, colCount);
 
@@ -69,9 +71,6 @@ public final class BoardGenerator {
     }
 
     public static byte[] generateByteGrid(final short rowCount, final short colCount, final int totalBombCount) {
-        if (colCount < 1 || rowCount < 1) {
-            throw new IllegalArgumentException("colCount and rowCount must be greater than 0");
-        }
         if (totalBombCount < 1) {
             throw new IllegalArgumentException("bombCount must be between greater than 0");
         }
@@ -87,9 +86,13 @@ public final class BoardGenerator {
         return val & 0xFF; // 0xFF = 1111 1111
     }
 
+    private static int usign(final short val) {
+        return val & ((1 << 16) - 1);
+    }
+
     public static Cell[][] generateCells(final byte[] byteGrid) {
-        final short colCount = (short) ((usign(byteGrid[0]) << 8) + usign(byteGrid[1]));
-        final short rowCount = (short) ((usign(byteGrid[2]) << 8) + usign(byteGrid[3]));
+        final int colCount = ((usign(byteGrid[0]) << 8) + usign(byteGrid[1]));
+        final int rowCount = ((usign(byteGrid[2]) << 8) + usign(byteGrid[3]));
 
         final Cell[][] cells = new Cell[rowCount][colCount];
 
@@ -158,8 +161,8 @@ public final class BoardGenerator {
     }
 
     public static byte[] convertToBytes(final Cell[][] cells) {
-        final int rowCount = cells.length;
-        final int colCount = cells[0].length;
+        final short rowCount = (short) cells.length;
+        final short colCount = (short) cells[0].length;
 
         return byteGridHelper(rowCount, colCount, (x, y, z) -> cells[y][x].isBomb());
     }

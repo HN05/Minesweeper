@@ -12,9 +12,6 @@ public final class ActionList {
     private int chunkCount = 0;
 
     public ActionList(final short colSize, final short rowSize) {
-        if (colSize <= 0 || rowSize <= 0) {
-            throw new IllegalArgumentException("Sizes must be positive");
-        }
         this.actions = new ArrayList<>();
         actions.add((byte) (colSize >>> 8));
         actions.add((byte) (colSize));
@@ -101,6 +98,7 @@ public final class ActionList {
         return data;
     }
 
+    // length should be 1-32, not validating since private func
     private int extract(final int startBit, final int length) {
         int result = 0;
         int byteIndex = startBit / 8;
