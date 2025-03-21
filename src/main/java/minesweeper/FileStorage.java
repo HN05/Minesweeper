@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.time.LocalDate;
+import java.util.stream.Stream;
 
 public class FileStorage {
     private static final String storage = "storage/";
@@ -75,17 +76,24 @@ public class FileStorage {
         return new Board(BoardGenerator.generateCells(getBytes(path)), id);
     }
 
-    public static Game fetchGame(final String date, final int board) throws IOException {
-        final String path = storage + board + "/" + date + ".bin";
+    public static Game fetchGame(final String name, final int board) throws IOException {
+        final String path = storage + board + "/" + name + ".bin";
         return new Game(fetchBoard(board), new ActionList(getBytes(path)));
     }
 
     public static int[] fetchBoardIDs() throws IOException {
-        return new int[0];
+        final File folder = new File(storage);
+        final Stream<String> stream = Stream.of(folder.list());
+        return stream.mapToInt(Integer::parseInt).toArray();
     }
 
-    public static String[] fetchGames(final int boardID) {
-        return new String[0];
+    public static String[] fetchGamesNames(final int boardID) {
+        final File folder = new File(storage + boardID);
+        final Stream<String> stream = Stream.of(folder.list());
+        return stream
+                .filter(f -> f != "board.bin")
+                .map(f -> f.replace(".bin", ""))
+                .toArray(String[]::new);
     }
 
 }
