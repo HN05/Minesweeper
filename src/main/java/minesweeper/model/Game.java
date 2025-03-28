@@ -3,8 +3,6 @@ package minesweeper.model;
 import java.util.Collection;
 import java.util.HashSet;
 
-import minesweeper.GameListener;
-
 public final class Game {
     private final Board board;
     private final Collection<GameListener> listeners = new HashSet<>();
