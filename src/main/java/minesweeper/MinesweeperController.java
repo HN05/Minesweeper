@@ -2,28 +2,27 @@ package minesweeper;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import minesweeper.model.Board;
+import minesweeper.model.BoardGenerator;
 import minesweeper.model.Cell;
+import minesweeper.model.Game;
 import minesweeper.model.GameListener;
 
 public class MinesweeperController implements GameListener {
-    @FXML
-    private TextField firstNumber, secondNumber, operator;
+
+    private Game game = new Game(new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12)));
+    private boolean isMarking = false;
 
     @FXML
-    private Label result;
+    private GridPane grid;
 
     @FXML
-    private void handleButtonClick() {
-        /* initCalculator(operator.getText());
-        try {
-            int result = calculator.calculate(Integer.parseInt(firstNumber.getText()),
-                    Integer.parseInt(secondNumber.getText()));
-            this.result.setText(firstNumber.getText() + " " + operator.getText() + " " + secondNumber.getText() + " = "
-                    + String.valueOf(result));
-        } catch (NumberFormatException e) {
-            result.setText("Et eller begge tallene er ugyldige");
-        } */
+    private Label bombCounter; 
+
+    @FXML
+    private void handleToggleFlagMode() {
+        isMarking = !isMarking;
     }
 
 	@Override
