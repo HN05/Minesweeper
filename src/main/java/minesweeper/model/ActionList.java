@@ -137,18 +137,3 @@ public final class ActionList {
         }
     }
 }
-
-record Action(int x, int y, ActionType type) {
-};
-
-enum ActionType {
-    MARK, REVEAL;
-
-    public boolean isMark() {
-        return this == ActionType.MARK;
-    }
-
-    public static ActionType get(final boolean isMark) {
-        return isMark ? ActionType.MARK : ActionType.REVEAL;
-    }
-}

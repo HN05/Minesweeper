@@ -19,15 +19,7 @@ public final class Game {
     public Game(final Board board, final ActionList actionList) {
         this.board = board;
         this.actionList = actionList;
-        this.actionList.forEachAction(this::executeAction);
-    }
-
-    private void executeAction(final Action action) {
-        if (action.type().isMark()) {
-            mark(action.x(), action.y());
-        } else {
-            reveal(action.x(), action.y());
-        }
+        this.actionList.forEachAction(this::action);
     }
 
     public boolean isFinished() {
@@ -77,13 +69,11 @@ public final class Game {
         }
     }
 
-    public void reveal(final int x, final int y) {
-        final Cell cell = board.get(x, y);
+    private void reveal(final Cell cell) {
         if (cell.isRevealed())
             return;
 
         cell.revealCell();
-        actionList.addAction(new Action(x, y, ActionType.REVEAL));
         if (cell.isBomb()) {
             hasLost = true;
             isFinished = true;
@@ -91,17 +81,24 @@ public final class Game {
         } else {
             checkIfWon();
         }
-        updatedCell(cell);
     }
 
-    public void mark(final int x, final int y) {
-        final Cell cell = board.get(x, y);
+    private void mark(final Cell cell) {
         if (cell.isMarked())
             return;
 
         cell.markCell();
-        actionList.addAction(new Action(x, y, ActionType.MARK));
         markCount++;
-        updatedCell(cell);
     }
+
+	public void action(final Action action) {
+		final Cell cell = board.get(action.x(), action.y());
+		if (action.type().isMark()) {
+			mark(cell);
+		} else {
+			reveal(cell);
+		}
+		actionList.addAction(action);
+        updatedCell(cell);
+	}
 }

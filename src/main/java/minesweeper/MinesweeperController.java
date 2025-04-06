@@ -2,18 +2,18 @@ package minesweeper;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import minesweeper.model.Board;
 import minesweeper.model.BoardGenerator;
 import minesweeper.model.Cell;
 import minesweeper.model.Game;
 import minesweeper.model.GameListener;
+import minesweeper.view.GameView;
 
 public class MinesweeperController implements GameListener {
 
 	private Game game = new Game(new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12)));
-	private boolean isMarking = false;
+	private GameView gameView = null;
 
 	@FXML
 	private GridPane grid;
@@ -23,47 +23,30 @@ public class MinesweeperController implements GameListener {
 
 	@FXML
 	private void handleToggleFlagMode() {
-		isMarking = !isMarking;
-	}
-
-	private int getGridSize() {
-		final double width = grid.getWidth();
-		final double height = grid.getHeight();
-		return 10;
-	}
-
-	private void renderGrid() {
-		grid.getChildren().clear();
-		final int gridSize = getGridSize();
-		final Board board = game.getBoard();
-		for (int y = 0; y < board.getRowCount(); y++) {
-			for (int x = 0; x < board.getColCount(); x++) {
-				final Button button = new Button();
-				button.setPrefSize(gridSize, gridSize);
-				final int x_loc = x;
-				final int y_loc = y;
-				button.setOnAction(e -> handleClick(x_loc, y_loc));
-				grid.add(button, x, y);
-			}
+		if (gameViewExists()) {
+			gameView.toggleMarking();
 		}
 	}
 
 	@FXML
 	private void initialize() {
-		renderGrid();
+		render();
 	}
 
-	private void handleClick(final int x, final int y) {
-		if (isMarking) {
-			game.mark(x, y);
-		} else {
-			game.reveal(x, y);
-		} 
+	private void render() {
+		if (!gameViewExists()) {
+			return;
+		}
+		gameView.renderGrid(grid, game.getBoard(), game::action);
+	}
+
+	private boolean gameViewExists() {
+		return gameView != null;
 	}
 
 	@Override
 	public void updatedCell(final Cell cell) {
-		renderGrid();
+		render();
 	}
 
 	@Override
