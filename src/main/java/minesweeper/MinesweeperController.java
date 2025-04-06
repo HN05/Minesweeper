@@ -13,7 +13,7 @@ import minesweeper.view.GameView;
 public class MinesweeperController implements GameListener {
 
 	private Game game = new Game(new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12)));
-	private GameView gameView = null;
+	private GameView gameView = new GameView();
 
 	@FXML
 	private GridPane grid;
@@ -30,7 +30,13 @@ public class MinesweeperController implements GameListener {
 
 	@FXML
 	private void initialize() {
-		render();
+		grid.sceneProperty().addListener((obs, oldScene, newScene) -> {
+			if (newScene != null) {
+				newScene.widthProperty().addListener((o, ov, nv) -> render());
+				newScene.heightProperty().addListener((o, ov, nv) -> render());
+				grid.layoutBoundsProperty().addListener((o, oldVal, newVal) -> render());
+			}
+		});
 	}
 
 	private void render() {
@@ -38,6 +44,7 @@ public class MinesweeperController implements GameListener {
 			return;
 		}
 		gameView.renderGrid(grid, game.getBoard(), game::action);
+		gameView.renderBombCount(bombCounter, game.getBombsLeft());
 	}
 
 	private boolean gameViewExists() {

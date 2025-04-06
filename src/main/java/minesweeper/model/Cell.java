@@ -19,15 +19,20 @@ public final class Cell {
         nearbyBombs++;
     }
 
-    // Should only be used by Board class
+    // Should only be used by Game class
     void revealCell() {
         isRevealed = true;
     }
 
-    // Should only be used by Board class
+    // Should only be used by Game class
     void markCell() {
         isMarked = true;
     }
+
+    // Should only be used by Game class
+	void unMarkCell() {
+		isMarked = false;
+	}
 
     public int getX() {
         return x;
