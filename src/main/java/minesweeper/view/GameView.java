@@ -1,17 +1,28 @@
 package minesweeper.view;
 
+import java.net.URL;
 import java.util.function.Consumer;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import minesweeper.MinesweeperApp;
 import minesweeper.model.Action;
 import minesweeper.model.ActionType;
 import minesweeper.model.Board;
 import minesweeper.model.Cell;
 
 public class GameView {
-	private boolean isMarking = false;
+	private boolean isMarking;
+	private Image flag;
+
+	public GameView() {
+		isMarking = true;
+		final URL flagURL = MinesweeperApp.class.getResource("flag.png");
+		flag = new Image(flagURL.toExternalForm());
+	}
 
 	public void toggleMarking() {
 		isMarking = !isMarking;
@@ -28,7 +39,17 @@ public class GameView {
 	}
 
 	private void renderCell(final Cell cell, final Button button) {
-
+		button.setGraphic(null);
+		button.setText("");
+		if (cell.isMarked()) {
+			ImageView flagView = new ImageView(flag);
+			flagView.setFitWidth(button.getPrefWidth());
+			flagView.setFitHeight(button.getPrefHeight());
+			button.setGraphic(flagView);
+		} else if (cell.isRevealed()) {
+			button.setText(Integer.toString(cell.getNearbyBombs()));
+			button.setDisable(true);
+		}
 	}
 
 	public void renderGrid(final GridPane grid, final Board board, final Consumer<Action> performAction) {

@@ -25,11 +25,13 @@ public class MinesweeperController implements GameListener {
 	private void handleToggleFlagMode() {
 		if (gameViewExists()) {
 			gameView.toggleMarking();
+			render();
 		}
 	}
 
 	@FXML
 	private void initialize() {
+		game.addListener(this);
 		grid.sceneProperty().addListener((obs, oldScene, newScene) -> {
 			if (newScene != null) {
 				newScene.widthProperty().addListener((o, ov, nv) -> render());
@@ -39,16 +41,17 @@ public class MinesweeperController implements GameListener {
 		});
 	}
 
+	private boolean gameViewExists() {
+		return gameView != null;
+	}
+
 	private void render() {
 		if (!gameViewExists()) {
 			return;
 		}
 		gameView.renderGrid(grid, game.getBoard(), game::action);
+		System.out.println("Bombs left: " + game.getBombsLeft());
 		gameView.renderBombCount(bombCounter, game.getBombsLeft());
-	}
-
-	private boolean gameViewExists() {
-		return gameView != null;
 	}
 
 	@Override
@@ -58,8 +61,7 @@ public class MinesweeperController implements GameListener {
 
 	@Override
 	public void updatedGameState() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'updatedState'");
+		render();
 	}
 
 }

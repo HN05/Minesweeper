@@ -78,7 +78,7 @@ public final class Game {
 	}
 
 	private void reveal(final Cell cell) {
-		if (cell.isRevealed())
+		if (cell.isRevealed() || cell.isMarked())
 			return;
 
 		cell.revealCell();
@@ -107,8 +107,10 @@ public final class Game {
 		final Cell cell = board.get(action.x(), action.y());
 		if (action.type().isMark()) {
 			mark(cell);
+			System.out.println("mark: " + action.x() + ", " + action.y());
 		} else {
 			reveal(cell);
+			System.out.println("reveal: " + action.x() + ", " + action.y());
 		}
 		actionList.addAction(action);
 		updatedCell(cell);

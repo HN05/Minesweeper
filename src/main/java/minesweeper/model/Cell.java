@@ -21,6 +21,9 @@ public final class Cell {
 
     // Should only be used by Game class
     void revealCell() {
+		if (isMarked) {
+			throw new IllegalStateException("Can't reveal cell that is marked");
+		}
         isRevealed = true;
     }
 
