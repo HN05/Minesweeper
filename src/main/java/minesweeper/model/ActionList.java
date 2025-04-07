@@ -8,8 +8,8 @@ public final class ActionList {
     private final List<Byte> actions;
     private final int bitRowSize;
     private final int bitColSize;
-    private final int chunkSize;
-    private int chunkCount = 0;
+    private final int bitActionSize;
+    private int actionCount = 0;
 
     public ActionList(final short colSize, final short rowSize) {
         this.actions = new ArrayList<>();
@@ -20,13 +20,13 @@ public final class ActionList {
 
         this.bitColSize = requiredSize(colSize);
         this.bitRowSize = requiredSize(rowSize);
-        this.chunkSize = bitRowSize + bitColSize + 1;
+        this.bitActionSize = bitRowSize + bitColSize + 1;
     }
 
     public ActionList(final byte[] byteData) {
         bitColSize = requiredSize((usign(byteData[0]) << 8) + usign(byteData[1]));
         bitRowSize = requiredSize((usign(byteData[2]) << 8) + usign(byteData[3]));
-        chunkSize = bitRowSize + bitColSize + 1;
+        bitActionSize = bitRowSize + bitColSize + 1;
         actions = new ArrayList<>();
         for (byte element : byteData) {
             actions.add(element);
@@ -48,14 +48,18 @@ public final class ActionList {
         return pow;
     }
 
-    public int getChunkSize() {
-        return chunkSize;
+    public int getBitActionSize() {
+        return bitActionSize;
     }
+
+	public int getActionCount() {
+		return actionCount;
+	}
 
     public void addAction(final Action action) {
         // First 32 bits (4*8) are metadata
-        int bitNum = 32 + chunkSize * chunkCount;
-        int left = chunkSize;
+        int bitNum = 32 + bitActionSize * actionCount;
+        int left = bitActionSize;
         while (left > 0) {
             final int num = bitNum % 8; // Pos in the byte
             final int byteIndex = bitNum / 8; // Index of the byte
@@ -68,12 +72,12 @@ public final class ActionList {
             val <<= 1; // Make room for bit
             int bit = 0;
 
-            if (left == chunkSize) {
+            if (left == bitActionSize) {
                 // Bit is type
                 bit = action.type().isMark() ? 1 : 0;
             } else if (left > bitRowSize) {
                 // Bit is part of x coord
-                bit = action.x() >>> bitColSize - (chunkSize - left);
+                bit = action.x() >>> bitColSize - (bitActionSize - left);
             } else {
                 // Bit is part of y coord
                 bit = action.y() >>> left - 1 - bitRowSize;
@@ -87,7 +91,7 @@ public final class ActionList {
             left--;
             bitNum++;
         }
-        chunkCount++;
+        actionCount++;
     }
 
     public byte[] getByteData() {
@@ -123,8 +127,8 @@ public final class ActionList {
     }
 
     public void forEachAction(Consumer<Action> consumer) {
-        for (int i = 0; i < chunkCount; i++) {
-            int bitNum = 32 + i * chunkSize;
+        for (int i = 0; i < actionCount; i++) {
+            int bitNum = 32 + i * bitActionSize;
             final boolean isMark = extract(bitNum, 1) == 1;
             bitNum++;
 

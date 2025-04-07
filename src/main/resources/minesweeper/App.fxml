@@ -16,6 +16,7 @@
 			<children>
 				<Label fx:id="bombCounter" />
 				<Button fx:id="modeSwitch" onAction="#handleToggleFlagMode" />
+				<Button fx:id="exitGame" text="Exit" onAction="#handleExitGame" />
 			</children>
 		</HBox>
 		<HBox alignment="CENTER" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">

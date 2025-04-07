@@ -1,5 +1,7 @@
 package minesweeper;
 
+import java.io.IOException;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -34,6 +36,11 @@ public class MinesweeperController implements GameListener {
 	}
 
 	@FXML
+	private void handleExitGame() {
+		exitGame();
+	}
+
+	@FXML
 	private void initialize() {
 		final Game test = new Game(new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12)));
 		initGame(test);
@@ -62,15 +69,40 @@ public class MinesweeperController implements GameListener {
 		if (!gameViewExists()) {
 			return;
 		}
-		gameView.renderGrid(grid, game.getBoard(), game::action);
+		gameView.renderGrid(grid, game.getBoard(), game.getActionCount(), (action, count) -> {
+			// Hinders double clicking
+			if (count == game.getActionCount()) {
+				game.action(action);
+			}
+		});
 		gameView.renderBombCount(bombCounter, game.getBombsLeft());
 		gameView.renderModeSwitch(modeSwitch);
+	}
+
+	private void storeGame() {
+		if (game == null) {
+			return;
+		}
+		try {
+			FileStorage.storeGame(game);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void exitGame() {
+		if (!game.isFinished()) {
+			storeGame();
+		}
+		game = null;
+		gameView = null;
 	}
 
 	@Override
 	public void updatedCell(final Cell cell) {
 		// have cell here in future for potentially more efficient rendering
 		render();
+		storeGame();
 	}
 
 	@Override
@@ -83,8 +115,7 @@ public class MinesweeperController implements GameListener {
 			}
 
 			FileStorage.deleteGame(game);
-			this.game = null;
-			this.gameView = null;
+			exitGame();
 		}
 	}
 }

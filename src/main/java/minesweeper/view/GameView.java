@@ -1,7 +1,7 @@
 package minesweeper.view;
 
 import java.net.URL;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -70,7 +70,7 @@ public class GameView {
 		}
 	}
 
-	public void renderGrid(final GridPane grid, final Board board, final Consumer<Action> performAction) {
+	public void renderGrid(final GridPane grid, final Board board, final int actionCount, final BiConsumer<Action, Integer> performAction) {
 		grid.getChildren().clear();
 		final int gridSize = getGridSize(grid, board);
 		for (int y = 0; y < board.getRowCount(); y++) {
@@ -79,7 +79,7 @@ public class GameView {
 				button.setPrefSize(gridSize, gridSize);
 				button.setStyle("-fx-background-radius: 0;");
 				final Action action = new Action(x, y, isMarking ? ActionType.MARK : ActionType.REVEAL);
-				button.setOnAction(e -> performAction.accept(action));
+				button.setOnAction(e -> performAction.accept(action, actionCount));
 				renderCell(board.get(x, y), button);
 				grid.add(button, x, y);
 			}

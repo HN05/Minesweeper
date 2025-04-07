@@ -50,6 +50,10 @@ public final class Game {
 		return name;
 	}
 
+	public int getActionCount() {
+		return actionList.getActionCount();
+	}
+
 	public void addListener(final GameListener listener) {
 		listeners.add(listener);
 	}
