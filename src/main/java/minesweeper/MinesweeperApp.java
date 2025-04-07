@@ -25,8 +25,8 @@ public class MinesweeperApp extends Application {
         final Image appIcon = new Image(getResource("minesweeper.png").toExternalForm());
         // set app icon (does not set dock icon)
         primaryStage.getIcons().add(appIcon);
-        primaryStage.setMinWidth(300);
-        primaryStage.setMinHeight(300);
+        primaryStage.setMinWidth(500);
+        primaryStage.setMinHeight(500);
         primaryStage.setScene(new Scene(FXMLLoader.load(getResource("App.fxml"))));
         primaryStage.show();
     }

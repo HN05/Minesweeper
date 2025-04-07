@@ -3,6 +3,7 @@ package minesweeper.view;
 import java.net.URL;
 import java.util.function.Consumer;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -39,12 +40,11 @@ public class GameView {
 	}
 
 	private void renderCell(final Cell cell, final Button button) {
-		button.setGraphic(null);
-		button.setText("");
 		if (cell.isMarked()) {
 			ImageView flagView = new ImageView(flag);
 			flagView.setFitWidth(button.getPrefWidth());
 			flagView.setFitHeight(button.getPrefHeight());
+			button.setPadding(Insets.EMPTY);
 			button.setGraphic(flagView);
 		} else if (cell.isRevealed()) {
 			button.setText(Integer.toString(cell.getNearbyBombs()));
@@ -60,6 +60,7 @@ public class GameView {
 			for (int x = 0; x < board.getColCount(); x++) {
 				final Button button = new Button();
 				button.setPrefSize(gridSize, gridSize);
+				button.setStyle("-fx-background-radius: 0;");
 				final Action action = new Action(x, y, isMarking ? ActionType.MARK : ActionType.REVEAL);
 				button.setOnAction(e -> performAction.accept(action));
 				renderCell(board.get(x, y), button);
