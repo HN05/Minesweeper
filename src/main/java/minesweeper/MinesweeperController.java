@@ -13,8 +13,8 @@ import minesweeper.view.GameView;
 
 public class MinesweeperController implements GameListener {
 
-	private Game game = new Game(new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12)));
-	private GameView gameView = new GameView();
+	private Game game = null;
+	private GameView gameView = null;
 
 	@FXML
 	private GridPane grid;
@@ -35,11 +35,20 @@ public class MinesweeperController implements GameListener {
 
 	@FXML
 	private void initialize() {
+		final Game test = new Game(new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12)));
+		initGame(test);
+	}
+
+	private void initGame(final Game game) {
+		this.game = game;
+		this.gameView = new GameView();
 		game.addListener(this);
 		grid.sceneProperty().addListener((obs, oldScene, newScene) -> {
 			if (newScene != null) {
+				// renders when resizing
 				newScene.widthProperty().addListener((o, ov, nv) -> render());
 				newScene.heightProperty().addListener((o, ov, nv) -> render());
+				// renders on appearing
 				grid.layoutBoundsProperty().addListener((o, oldVal, newVal) -> render());
 			}
 		});
@@ -60,12 +69,22 @@ public class MinesweeperController implements GameListener {
 
 	@Override
 	public void updatedCell(final Cell cell) {
+		// have cell here in future for potentially more efficient rendering
 		render();
 	}
 
 	@Override
 	public void updatedGameState() {
-		render();
-	}
+		if (game.isFinished()) {
+			if (game.hasLost()) {
+				gameView.renderLossScreen();
+			} else {
+				gameView.renderWinScreen();
+			}
 
+			FileStorage.deleteGame(game);
+			this.game = null;
+			this.gameView = null;
+		}
+	}
 }

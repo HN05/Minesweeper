@@ -18,11 +18,14 @@ import minesweeper.model.Cell;
 public class GameView {
 	private boolean isMarking;
 	private Image flag;
+	private Image bomb;
 
 	public GameView() {
 		isMarking = true;
 		final URL flagURL = MinesweeperApp.class.getResource("flag.png");
 		flag = new Image(flagURL.toExternalForm());
+		final URL bombURL = MinesweeperApp.class.getResource("bomb.png");
+		bomb = new Image(bombURL.toExternalForm());
 	}
 
 	public void toggleMarking() {
@@ -41,26 +44,35 @@ public class GameView {
 
 	public void renderModeSwitch(final Button button) {
 		final String background = isMarking ? "green" : "red";
+		final String text = isMarking ? "🚩" : "🔍";
 		button.setStyle("-fx-background-color:" + background + "; -fx-text-fill: white;");
+		button.setText(text);
+	}
+
+	private void addImage(final Image img, final Button button) {
+		ImageView imgView = new ImageView(img);
+		imgView.setFitWidth(button.getPrefWidth());
+		imgView.setFitHeight(button.getPrefHeight());
+		button.setPadding(Insets.EMPTY);
+		button.setGraphic(imgView);
 	}
 
 	private void renderCell(final Cell cell, final Button button) {
 		if (cell.isMarked()) {
-			ImageView flagView = new ImageView(flag);
-			flagView.setFitWidth(button.getPrefWidth());
-			flagView.setFitHeight(button.getPrefHeight());
-			button.setPadding(Insets.EMPTY);
-			button.setGraphic(flagView);
+			addImage(flag, button);
 		} else if (cell.isRevealed()) {
-			button.setText(Integer.toString(cell.getNearbyBombs()));
 			button.setDisable(true);
+			if (cell.isBomb()) {
+				addImage(bomb, button);
+			} else {
+				button.setText(Integer.toString(cell.getNearbyBombs()));
+			}
 		}
 	}
 
 	public void renderGrid(final GridPane grid, final Board board, final Consumer<Action> performAction) {
 		grid.getChildren().clear();
 		final int gridSize = getGridSize(grid, board);
-		System.out.println("Gridsize: " + gridSize);
 		for (int y = 0; y < board.getRowCount(); y++) {
 			for (int x = 0; x < board.getColCount(); x++) {
 				final Button button = new Button();
@@ -72,5 +84,13 @@ public class GameView {
 				grid.add(button, x, y);
 			}
 		}
+	}
+
+	public void renderWinScreen() {
+
+	}
+
+	public void renderLossScreen() {
+
 	}
 }

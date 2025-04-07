@@ -15,7 +15,7 @@
 			</padding>
 			<children>
 				<Label fx:id="bombCounter" />
-				<Button fx:id="modeSwitch" text="Toggle Flagging" onAction="#handleToggleFlagMode" />
+				<Button fx:id="modeSwitch" onAction="#handleToggleFlagMode" />
 			</children>
 		</HBox>
 		<HBox alignment="CENTER" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">

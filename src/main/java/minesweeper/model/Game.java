@@ -1,10 +1,12 @@
 package minesweeper.model;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 
 public final class Game {
 	private final Board board;
+	private final String name;
 	private final Collection<GameListener> listeners = new HashSet<>();
 	private final ActionList actionList;
 	private int markCount = 0;
@@ -14,10 +16,12 @@ public final class Game {
 	public Game(final Board board) {
 		this.board = board;
 		this.actionList = new ActionList((short) board.getRowCount(), (short) board.getColCount());
+		this.name = LocalDate.now().toString();
 	}
 
-	public Game(final Board board, final ActionList actionList) {
+	public Game(final Board board, final ActionList actionList, final String name) {
 		this.board = board;
+		this.name = name;
 		this.actionList = actionList;
 		this.actionList.forEachAction(this::action);
 	}
@@ -40,6 +44,10 @@ public final class Game {
 
 	public ActionList getActionList() {
 		return actionList;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public void addListener(final GameListener listener) {
@@ -73,7 +81,6 @@ public final class Game {
 
 		if (allRevealead) {
 			isFinished = true;
-			updatedGameState();
 		}
 	}
 
@@ -98,15 +105,12 @@ public final class Game {
 		if (cell.isBomb()) {
 			hasLost = true;
 			isFinished = true;
-			updatedGameState();
 			return;
 		}
 
 		if (cell.getNearbyBombs() == 0) {
 			revealNearby(cell);
 		}
-
-		checkIfWon();
 	}
 
 	private void mark(final Cell cell) {
@@ -120,17 +124,17 @@ public final class Game {
 	}
 
 	public void action(final Action action) {
-		System.out.println(board.getBombCount());
-
 		final Cell cell = board.get(action.x(), action.y());
 		if (action.type().isMark()) {
 			mark(cell);
-			System.out.println("mark: " + action.x() + ", " + action.y());
 		} else {
 			reveal(cell);
-			System.out.println("reveal: " + action.x() + ", " + action.y());
 		}
 		actionList.addAction(action);
 		updatedCell(cell);
+		checkIfWon();
+		if (isFinished) {
+			updatedGameState();
+		}
 	}
 }
