@@ -37,7 +37,9 @@ public class MinesweeperController implements GameListener {
 
 	@FXML
 	private void handleExitGame() {
-		exitGame();
+		if (gameViewExists()) {
+			exitGame();
+		}
 	}
 
 	@FXML
@@ -101,8 +103,10 @@ public class MinesweeperController implements GameListener {
 	@Override
 	public void updatedCell(final Cell cell) {
 		// have cell here in future for potentially more efficient rendering
-		render();
-		storeGame();
+		if (!game.pendingActions()) {
+			render();
+			storeGame();
+		}
 	}
 
 	@Override

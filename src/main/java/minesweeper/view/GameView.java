@@ -21,7 +21,7 @@ public class GameView {
 	private Image bomb;
 
 	public GameView() {
-		isMarking = true;
+		isMarking = false;
 		final URL flagURL = MinesweeperApp.class.getResource("flag.png");
 		flag = new Image(flagURL.toExternalForm());
 		final URL bombURL = MinesweeperApp.class.getResource("bomb.png");

@@ -12,6 +12,7 @@ public final class Game {
 	private int markCount = 0;
 	private boolean isFinished = false;
 	private boolean hasLost = false;
+	private int pendingActions = 0;
 
 	public Game(final Board board) {
 		this.board = board;
@@ -52,6 +53,10 @@ public final class Game {
 
 	public int getActionCount() {
 		return actionList.getActionCount();
+	}
+
+	public boolean pendingActions() {
+		return pendingActions != 0;
 	}
 
 	public void addListener(final GameListener listener) {
@@ -128,6 +133,7 @@ public final class Game {
 	}
 
 	public void action(final Action action) {
+		pendingActions++;
 		final Cell cell = board.get(action.x(), action.y());
 		if (action.type().isMark()) {
 			mark(cell);
@@ -135,6 +141,7 @@ public final class Game {
 			reveal(cell);
 		}
 		actionList.addAction(action);
+		pendingActions--;
 		updatedCell(cell);
 		checkIfWon();
 		if (isFinished) {
