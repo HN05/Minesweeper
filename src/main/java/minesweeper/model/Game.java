@@ -77,6 +77,19 @@ public final class Game {
 		}
 	}
 
+	private void revealNearby(final Cell cell) {
+		for (int x = -1; x <= 1; x++) {
+			final int step = x == 0 ? 2 : 1; // skip 0,0
+			for (int y = -1; y <= 1; y += step) {
+				final int new_x = cell.getX() + x;
+				final int new_y = cell.getY() + y;
+				if (!board.isValid(new_x, new_y))
+					continue;
+				action(new Action(new_x, new_y, ActionType.REVEAL));
+			}
+		}
+	}
+
 	private void reveal(final Cell cell) {
 		if (cell.isRevealed() || cell.isMarked())
 			return;
@@ -86,9 +99,14 @@ public final class Game {
 			hasLost = true;
 			isFinished = true;
 			updatedGameState();
-		} else {
-			checkIfWon();
+			return;
 		}
+
+		if (cell.getNearbyBombs() == 0) {
+			revealNearby(cell);
+		}
+
+		checkIfWon();
 	}
 
 	private void mark(final Cell cell) {

@@ -44,9 +44,15 @@ public final class Board {
         return this.cells;
     }
 
-    public Cell get(int x, int y) {
+    public Cell get(final int x, final int y) {
         return cells[y][x];
     }
+
+	public boolean isValid(final int x, final int y) {
+		final boolean valid_x = x > 0 && x < cells[0].length;
+		final boolean valid_y = y > 0 && y < cells.length;
+		return valid_x && valid_y;
+	}
 
     public Stream<Cell[]> stream() {
         return Arrays.stream(cells);
