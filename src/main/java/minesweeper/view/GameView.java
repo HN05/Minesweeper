@@ -36,7 +36,12 @@ public class GameView {
 	}
 
 	public void renderBombCount(final Label label, final int count) {
-		label.setText("Bombs: " + count);
+		label.setText("Bombs left: " + count);
+	}
+
+	public void renderModeSwitch(final Button button) {
+		final String background = isMarking ? "green" : "red";
+		button.setStyle("-fx-background-color:" + background + "; -fx-text-fill: white;");
 	}
 
 	private void renderCell(final Cell cell, final Button button) {

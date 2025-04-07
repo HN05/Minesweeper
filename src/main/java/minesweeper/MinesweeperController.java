@@ -1,6 +1,7 @@
 package minesweeper;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import minesweeper.model.Board;
@@ -17,6 +18,9 @@ public class MinesweeperController implements GameListener {
 
 	@FXML
 	private GridPane grid;
+
+	@FXML
+	private Button modeSwitch;
 
 	@FXML
 	private Label bombCounter;
@@ -50,8 +54,8 @@ public class MinesweeperController implements GameListener {
 			return;
 		}
 		gameView.renderGrid(grid, game.getBoard(), game::action);
-		System.out.println("Bombs left: " + game.getBombsLeft());
 		gameView.renderBombCount(bombCounter, game.getBombsLeft());
+		gameView.renderModeSwitch(modeSwitch);
 	}
 
 	@Override
