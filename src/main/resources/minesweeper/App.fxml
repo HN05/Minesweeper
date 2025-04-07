@@ -15,7 +15,7 @@
 			</padding>
 			<children>
 				<Label fx:id="bombCounter" />
-				<Button fx:id="modeSwitch" onAction="#handleToggleFlagMode" />
+				<Button fx:id="modeSwitch" text="🚩" onAction="#handleToggleFlagMode" />
 				<Button fx:id="exitGame" text="Exit" onAction="#handleExitGame" />
 			</children>
 		</HBox>

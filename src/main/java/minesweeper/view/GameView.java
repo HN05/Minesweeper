@@ -44,9 +44,7 @@ public class GameView {
 
 	public void renderModeSwitch(final Button button) {
 		final String background = isMarking ? "green" : "red";
-		final String text = isMarking ? "🚩" : "🔍";
 		button.setStyle("-fx-background-color:" + background + "; -fx-text-fill: white;");
-		button.setText(text);
 	}
 
 	private void addImage(final Image img, final Button button) {
