@@ -24,10 +24,19 @@ public class MinesweeperController implements GameListener {
 	private GameSelectView gameSelectView = null;
 
 	@FXML
-	private VBox gameBox;
+	private VBox gameSelectBox;
 
 	@FXML
-	private VBox gameSelectBox;
+	private Label titleLabel;
+
+	@FXML
+	private Label errorLabel;
+
+	@FXML
+	private VBox selectContainer;
+
+	@FXML
+	private VBox gameBox;
 
 	@FXML
 	private GridPane grid;
@@ -96,18 +105,59 @@ public class MinesweeperController implements GameListener {
 		board = new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12));
 	}
 
-	private void selectGame() {
-		gameSelectView = new GameSelectView();
+	private void renderSelectGame() {
+		if (gameSelectView == null) {
+			gameSelectView = new GameSelectView();
+			gameBox.setVisible(false);
+			gameSelectBox.setVisible(true);
+		}
 		if (board == null) {
 			final int[] boards = FileStorage.fetchBoardIDs();
-			gameSelectView.renderSelectBoard(boards);
+			System.out.println("Boards: " + boards.length);
+			gameSelectView.renderSelectBoard(boards, titleLabel, selectContainer, this::fetchBoard);
 		} else {
 			final String[] games = FileStorage.fetchGamesNames(board.getID());
-			gameSelectView.renderSelectGame(board, games);
+			gameSelectView.renderSelectGame(games, titleLabel, selectContainer, this::fetchGame);
 		}
+		gameSelectView.renderErrorLabel(errorLabel);
+	}
+
+	private void fetchBoard(final Integer boardID) {
+		if (boardID == null) {
+			getNewBoard();
+		} else {
+			try {
+				this.board = FileStorage.fetchBoard(boardID);
+			} catch (IOException e) {
+				e.printStackTrace();
+				gameSelectView.setError(e.toString());
+			}
+		}
+		render();
+	}
+
+	private void fetchGame(final String gameName) {
+		Objects.requireNonNull(board);
+		Game game = null;
+		if (gameName == null) {
+			game = new Game(board);
+		} else {
+			try {
+				game = FileStorage.fetchGame(gameName, board.getID());
+			} catch (IOException e) {
+				e.printStackTrace();
+				gameSelectView.setError(e.toString());
+			}
+		}
+		initGame(game);
+		render();
 	}
 
 	private void initGame(final Game game) {
+		if (game == null) {
+			return;
+		}
+		gameSelectView = null;
 		this.game = game;
 		this.gameView = new GameView();
 		game.addListener(this);
@@ -119,11 +169,13 @@ public class MinesweeperController implements GameListener {
 
 	private void render() {
 		if (!gameViewExists()) {
-			gameBox.setVisible(false);
-			gameSelectBox.setVisible(true);
-			selectGame();
+			renderSelectGame();
 			return;
 		}
+		renderGameView();
+	}
+
+	private void renderGameView() {
 		gameBox.setVisible(true);
 		gameSelectBox.setVisible(false);
 		gameView.renderGrid(grid, game.getBoard(), game.getActionCount(), (action, count) -> {

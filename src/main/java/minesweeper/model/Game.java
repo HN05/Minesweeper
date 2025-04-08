@@ -1,6 +1,6 @@
 package minesweeper.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -17,7 +17,7 @@ public final class Game {
 	public Game(final Board board) {
 		this.board = board;
 		this.actionList = new ActionList((short) board.getRowCount(), (short) board.getColCount());
-		this.name = LocalDate.now().toString();
+		this.name = LocalDateTime.now().toString();
 	}
 
 	public Game(final Board board, final ActionList actionList, final String name) {

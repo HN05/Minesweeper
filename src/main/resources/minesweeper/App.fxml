@@ -40,8 +40,9 @@
 		</VBox>
 		<VBox fx:id="gameSelectBox" visible="false" spacing="10" alignment="CENTER">
 			<children>
-				<Label fx:id="titleLabel" text="Select Game" style="-fx-font-size: 18;" />
-				<VBox fx:id="buttonContainer" spacing="5" alignment="CENTER" />
+				<Label fx:id="titleLabel" style="-fx-font-size: 18;" />
+				<VBox fx:id="selectContainer" spacing="5" alignment="CENTER" />
+				<Label fx:id="errerLabel" />
 			</children>
 		</VBox>
 	</children>

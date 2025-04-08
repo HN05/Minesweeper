@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.stream.Stream;
 
 public class FileStorage {
@@ -47,9 +46,6 @@ public class FileStorage {
 		storeBoard(board);
 		final String path = storage + board.getID() + "/" + game.getName() + ".bin";
 		final File file = new File(path);
-		if (file.exists()) {
-			throw new FileAlreadyExistsException(path);
-		}
 		final byte[] data = game.getActionList().getByteData();
 		try (final FileOutputStream out = new FileOutputStream(file)) {
 			out.write(data);
@@ -79,16 +75,21 @@ public class FileStorage {
 		return new Game(fetchBoard(board), new ActionList(getBytes(path)), name);
 	}
 
+	private static Stream<String> fetchFileStream(final String path) {
+		final File folder = new File(path);
+		final String[] list = folder.list();
+		if (list == null || list.length == 0) {
+			return Stream.empty();
+		}
+		return Stream.of(list);
+	}
+
 	public static int[] fetchBoardIDs() {
-		final File folder = new File(storage);
-		final Stream<String> stream = Stream.of(folder.list());
-		return stream.mapToInt(Integer::parseInt).toArray();
+		return fetchFileStream(storage).mapToInt(Integer::parseInt).toArray();
 	}
 
 	public static String[] fetchGamesNames(final int boardID) {
-		final File folder = new File(storage + boardID);
-		final Stream<String> stream = Stream.of(folder.list());
-		return stream
+		return fetchFileStream(storage + boardID)
 				.filter(f -> f != "board.bin")
 				.map(f -> f.replace(".bin", ""))
 				.toArray(String[]::new);
