@@ -24,6 +24,12 @@ public class MinesweeperController implements GameListener {
 	private GameSelectView gameSelectView = null;
 
 	@FXML
+	private VBox gameBox;
+
+	@FXML
+	private VBox gameSelectBox;
+
+	@FXML
 	private GridPane grid;
 
 	@FXML
@@ -50,6 +56,7 @@ public class MinesweeperController implements GameListener {
 	private void handleExitGame() {
 		if (gameViewExists()) {
 			exitGame();
+			render();
 		}
 	}
 
@@ -73,13 +80,13 @@ public class MinesweeperController implements GameListener {
 	@FXML
 	private void initialize() {
 		// renders on appear
-		grid.sceneProperty().addListener((obs, oldScene, newScene) -> {
+		gameBox.sceneProperty().addListener((obs, oldScene, newScene) -> {
 			if (newScene != null) {
 				// renders when resizing
 				newScene.widthProperty().addListener((o, ov, nv) -> render());
 				newScene.heightProperty().addListener((o, ov, nv) -> render());
 				// renders on appearing
-				grid.layoutBoundsProperty().addListener((o, oldVal, newVal) -> render());
+				gameBox.layoutBoundsProperty().addListener((o, oldVal, newVal) -> render());
 			}
 		});
 	}
@@ -112,9 +119,13 @@ public class MinesweeperController implements GameListener {
 
 	private void render() {
 		if (!gameViewExists()) {
+			gameBox.setVisible(false);
+			gameSelectBox.setVisible(true);
 			selectGame();
 			return;
 		}
+		gameBox.setVisible(true);
+		gameSelectBox.setVisible(false);
 		gameView.renderGrid(grid, game.getBoard(), game.getActionCount(), (action, count) -> {
 			// Hinders double clicking
 			if (count == game.getActionCount()) {
