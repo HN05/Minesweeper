@@ -13,6 +13,7 @@ import minesweeper.model.BoardGenerator;
 import minesweeper.model.Cell;
 import minesweeper.model.Game;
 import minesweeper.model.GameListener;
+import minesweeper.view.GameSelectView;
 import minesweeper.view.GameView;
 
 public class MinesweeperController implements GameListener {
@@ -20,6 +21,7 @@ public class MinesweeperController implements GameListener {
 	private Game game = null;
 	private Board board = null;
 	private GameView gameView = null;
+	private GameSelectView gameSelectView = null;
 
 	@FXML
 	private GridPane grid;
@@ -88,7 +90,14 @@ public class MinesweeperController implements GameListener {
 	}
 
 	private void selectGame() {
-
+		gameSelectView = new GameSelectView();
+		if (board == null) {
+			final int[] boards = FileStorage.fetchBoardIDs();
+			gameSelectView.renderSelectBoard(boards);
+		} else {
+			final String[] games = FileStorage.fetchGamesNames(board.getID());
+			gameSelectView.renderSelectGame(board, games);
+		}
 	}
 
 	private void initGame(final Game game) {
