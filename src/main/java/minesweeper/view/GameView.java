@@ -9,11 +9,13 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import minesweeper.MinesweeperApp;
 import minesweeper.model.Action;
 import minesweeper.model.ActionType;
 import minesweeper.model.Board;
 import minesweeper.model.Cell;
+import minesweeper.model.Game;
 
 public class GameView {
 	private boolean isMarking;
@@ -84,11 +86,9 @@ public class GameView {
 		}
 	}
 
-	public void renderWinScreen() {
-
-	}
-
-	public void renderLossScreen() {
-
+	public void renderEndScreen(final Game game, final Label label, final VBox vbox) {
+		final String message = game.hasLost() ? "You Lost!" : "You Won!";
+		label.setText(message);
+		vbox.setVisible(true);
 	}
 }

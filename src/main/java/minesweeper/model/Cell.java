@@ -60,4 +60,9 @@ public final class Cell {
     public boolean isMarked() {
         return isMarked;
     }
+	
+	public void reset() {
+		isMarked = false;
+		isRevealed = false;
+	}
 }

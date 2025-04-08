@@ -54,6 +54,10 @@ public final class Board {
 		return valid_x && valid_y;
 	}
 
+	public void reset() {
+		flatStream().forEach(Cell::reset);
+	}
+
     public Stream<Cell[]> stream() {
         return Arrays.stream(cells);
     }
