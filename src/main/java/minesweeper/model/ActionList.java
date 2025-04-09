@@ -85,7 +85,7 @@ public final class ActionList {
             }
             // left shift bit to align
             // add the bit val (use bitwise or for safety)
-            val |= (bit) << (7 - num);
+            val |= (bit & 1) << (7 - num);
 
             actions.set(byteIndex, val);
 

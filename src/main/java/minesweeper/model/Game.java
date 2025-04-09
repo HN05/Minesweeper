@@ -24,7 +24,7 @@ public final class Game {
 		this.board = board;
 		this.name = name;
 		this.actionList = actionList;
-		this.actionList.forEachAction(this::action);
+		this.actionList.forEachAction(action -> action(action, false));
 	}
 
 	public boolean isFinished() {
@@ -133,6 +133,10 @@ public final class Game {
 	}
 
 	public void action(final Action action) {
+		action(action, true);
+	}
+
+	public void action(final Action action, final boolean addToList) {
 		pendingActions++;
 		final Cell cell = board.get(action.x(), action.y());
 		if (action.type().isMark()) {
@@ -140,7 +144,9 @@ public final class Game {
 		} else {
 			reveal(cell);
 		}
-		actionList.addAction(action);
+		if (addToList) {
+			actionList.addAction(action);
+		}
 		pendingActions--;
 		updatedCell(cell);
 		checkIfWon();
