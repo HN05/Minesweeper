@@ -72,7 +72,8 @@ public class FileStorage {
 
 	public static Game fetchGame(final String name, final int board) throws IOException {
 		final String path = storage + board + "/" + name + ".bin";
-		return new Game(fetchBoard(board), new ActionList(getBytes(path)), name);
+		final ActionList actionList = new ActionList(getBytes(path));
+		return new Game(fetchBoard(board), actionList, name);
 	}
 
 	private static Stream<String> fetchFileStream(final String path) {

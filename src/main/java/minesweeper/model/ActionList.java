@@ -31,6 +31,7 @@ public final class ActionList {
         for (byte element : byteData) {
             actions.add(element);
         }
+		actionCount = (byteData.length * 8 - 32) / bitActionSize;
     }
     
     // returns an int that is unsigned
