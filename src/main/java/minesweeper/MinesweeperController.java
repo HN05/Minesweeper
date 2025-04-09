@@ -113,7 +113,6 @@ public class MinesweeperController implements GameListener {
 		}
 		if (board == null) {
 			final int[] boards = FileStorage.fetchBoardIDs();
-			System.out.println("Boards: " + boards.length);
 			gameSelectView.renderSelectBoard(boards, titleLabel, selectContainer, this::fetchBoard);
 		} else {
 			final String[] games = FileStorage.fetchGamesNames(board.getID());
@@ -204,6 +203,7 @@ public class MinesweeperController implements GameListener {
 			storeGame();
 		}
 		game = null;
+		board = null;
 		gameView = null;
 	}
 

@@ -81,7 +81,9 @@ public class FileStorage {
 		if (list == null || list.length == 0) {
 			return Stream.empty();
 		}
-		return Stream.of(list);
+		return Stream.of(list)
+				.map(String::trim)
+				.filter(name -> !name.startsWith("."));
 	}
 
 	public static int[] fetchBoardIDs() {
@@ -90,7 +92,7 @@ public class FileStorage {
 
 	public static String[] fetchGamesNames(final int boardID) {
 		return fetchFileStream(storage + boardID)
-				.filter(f -> f != "board.bin")
+				.filter(f -> !f.equals("board.bin"))
 				.map(f -> f.replace(".bin", ""))
 				.toArray(String[]::new);
 	}

@@ -1,5 +1,6 @@
 package minesweeper.view;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import javafx.scene.control.Button;
@@ -14,6 +15,7 @@ public class GameSelectView {
 			final Consumer<Integer> accept) {
 		container.getChildren().clear();
 		title.setText("Select a Board");
+		Arrays.sort(boards);
 		// Create a button for each board ID.
 		for (int boardID : boards) {
 			Button btn = new Button("Board " + boardID);
@@ -28,6 +30,7 @@ public class GameSelectView {
 
 	public void renderSelectGame(final String[] games, final Label title, final VBox container,
 			final Consumer<String> accept) {
+		Arrays.sort(games);
 		container.getChildren().clear();
 		title.setText("Select a Game");
 		// Create a button for each game.
