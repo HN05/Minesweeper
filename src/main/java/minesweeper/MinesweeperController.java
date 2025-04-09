@@ -122,6 +122,7 @@ public class MinesweeperController implements GameListener {
 	}
 
 	private void fetchBoard(final Integer boardID) {
+		gameSelectView.setError(null);
 		if (boardID == null) {
 			getNewBoard();
 		} else {
@@ -136,23 +137,21 @@ public class MinesweeperController implements GameListener {
 	}
 
 	private void fetchGame(final String gameName) {
-		Objects.requireNonNull(board);
-		Game game = null;
+		Objects.requireNonNull(board); // just crash, something very wrong
+		gameSelectView.setError(null);
 		if (gameName == null) {
-			game = new Game(board);
+			initGame(new Game(board));
 		} else if (gameName == "EXIT") {
 			board = null;
-			render();
-			return;
 		} else {
 			try {
 				game = FileStorage.fetchGame(gameName, board.getID());
+				initGame(game);
 			} catch (IOException e) {
 				e.printStackTrace();
 				gameSelectView.setError(e.toString());
 			}
 		}
-		initGame(game);
 		render();
 	}
 
