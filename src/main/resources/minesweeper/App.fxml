@@ -42,7 +42,7 @@
 			<children>
 				<Label fx:id="titleLabel" style="-fx-font-size: 18;" />
 				<VBox fx:id="selectContainer" spacing="5" alignment="CENTER" />
-				<Label fx:id="errerLabel" />
+				<Label fx:id="errorLabel" />
 			</children>
 		</VBox>
 	</children>
