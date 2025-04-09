@@ -70,7 +70,6 @@ public final class ActionList {
                 actions.add((byte) 0);
             }
             byte val = actions.get(byteIndex);
-            val <<= 1; // Make room for bit
             int bit = 0;
 
             if (left == bitActionSize) {
