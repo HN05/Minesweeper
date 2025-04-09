@@ -43,6 +43,9 @@ public class GameSelectView {
 		Button newGameBtn = new Button("New Game");
 		newGameBtn.setOnAction(e -> accept.accept(null));
 		container.getChildren().add(newGameBtn);
+		Button exitBtn = new Button("Exit");
+		exitBtn.setOnAction(e -> accept.accept("EXIT"));
+		container.getChildren().add(exitBtn);
 	}
 
 	public void renderErrorLabel(final Label label) {

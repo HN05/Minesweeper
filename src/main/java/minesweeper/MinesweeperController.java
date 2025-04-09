@@ -102,7 +102,7 @@ public class MinesweeperController implements GameListener {
 
 	private void getNewBoard() {
 		// set config for new boards here, could be ui in future
-		board = new Board(BoardGenerator.generateCells((short) 12, (short) 12, 12));
+		board = new Board(BoardGenerator.generateCells((short) 12, (short) 12, 14));
 	}
 
 	private void renderSelectGame() {
@@ -140,6 +140,10 @@ public class MinesweeperController implements GameListener {
 		Game game = null;
 		if (gameName == null) {
 			game = new Game(board);
+		} else if (gameName == "EXIT") {
+			board = null;
+			render();
+			return;
 		} else {
 			try {
 				game = FileStorage.fetchGame(gameName, board.getID());
@@ -203,7 +207,6 @@ public class MinesweeperController implements GameListener {
 			storeGame();
 		}
 		game = null;
-		board = null;
 		gameView = null;
 	}
 
