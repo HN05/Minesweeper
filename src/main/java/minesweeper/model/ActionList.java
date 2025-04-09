@@ -60,8 +60,8 @@ public final class ActionList {
     public void addAction(final Action action) {
         // First 32 bits (4*8) are metadata
         int bitNum = 32 + bitActionSize * actionCount;
-        int left = bitActionSize;
-        while (left > 0) {
+        int actionIndex = 0;
+        while (actionIndex < bitActionSize) {
             final int num = bitNum % 8; // Pos in the byte
             final int byteIndex = bitNum / 8; // Index of the byte
 
@@ -72,15 +72,15 @@ public final class ActionList {
             byte val = actions.get(byteIndex);
             int bit = 0;
 
-            if (left == bitActionSize) {
+            if (actionIndex == 0) {
                 // Bit is type
                 bit = action.type().isMark() ? 1 : 0;
-            } else if (left > bitRowSize) {
+            } else if (actionIndex <= bitColSize) {
                 // Bit is part of x coord
-                bit = action.x() >>> bitColSize - (bitActionSize - left);
+                bit = action.x() >>> (bitColSize - actionIndex);
             } else {
                 // Bit is part of y coord
-                bit = action.y() >>> left - 1 - bitRowSize;
+                bit = action.y() >>> ((bitRowSize - (actionIndex - bitColSize)));
             }
             // left shift bit to align
             // add the bit val (use bitwise or for safety)
@@ -88,7 +88,7 @@ public final class ActionList {
 
             actions.set(byteIndex, val);
 
-            left--;
+            actionIndex++;
             bitNum++;
         }
         actionCount++;
