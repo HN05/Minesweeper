@@ -3,6 +3,7 @@ package minesweeper.model;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
+import java.time.format.DateTimeFormatter;
 
 public final class Game {
 	private final Board board;
@@ -15,9 +16,13 @@ public final class Game {
 	private int pendingActions = 0;
 
 	public Game(final Board board) {
+		this(board, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+	}
+
+	public Game(final Board board, final String name) {
 		this.board = board;
+		this.name = name;
 		this.actionList = new ActionList((short) board.getRowCount(), (short) board.getColCount());
-		this.name = LocalDateTime.now().toString();
 	}
 
 	public Game(final Board board, final ActionList actionList, final String name) {
