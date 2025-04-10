@@ -98,9 +98,9 @@ public class FileStorage {
 				.toArray(String[]::new);
 	}
 
-	public static void deleteGame(final Game game) {
+	public static boolean deleteGame(final Game game) {
 		final String path = storage + game.getBoard().getID() + "/" + game.getName() + ".bin";
 		File file = new File(path);
-		file.delete();
+		return file.delete();
 	}
 }

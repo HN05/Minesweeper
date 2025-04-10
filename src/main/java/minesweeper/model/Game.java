@@ -111,7 +111,7 @@ public final class Game {
 		}
 	}
 
-	private void reveal(final Cell cell) {
+	private void reveal(final Cell cell, final boolean cascade) {
 		if (cell.isRevealed() || cell.isMarked())
 			return;
 
@@ -122,7 +122,7 @@ public final class Game {
 			return;
 		}
 
-		if (cell.getNearbyBombs() == 0) {
+		if (cell.getNearbyBombs() == 0 && cascade) {
 			revealNearby(cell);
 		}
 	}
@@ -147,7 +147,7 @@ public final class Game {
 		if (action.type().isMark()) {
 			mark(cell);
 		} else {
-			reveal(cell);
+			reveal(cell, addToList);
 		}
 		if (addToList) {
 			actionList.addAction(action);
