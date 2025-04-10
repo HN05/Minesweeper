@@ -17,6 +17,8 @@ import minesweeper.model.Game;
 
 class TestMinesweeper {
 
+	private final int testTimes = 20; // amount of times to run each test since random inputs
+
 	private Board generateBoard() {
 		return new Board(BoardGenerator.generateCells((short) 12, (short) 12, 14));
 	}
@@ -29,15 +31,13 @@ class TestMinesweeper {
 		return game;
 	}
 
-
 	private void sameCell(final Cell cell1, final Cell cell2) {
-		final boolean sameCell = cell1.getX() == cell2.getX() 
-		&& cell1.getY() == cell2.getY() 
-		&& cell1.isBomb() == cell2.isBomb()
-		&& cell1.isMarked() == cell2.isMarked()
-		&& cell1.isRevealed() == cell2.isRevealed()
-		&& cell1.getNearbyBombs() == cell2.getNearbyBombs()
-		;
+		final boolean sameCell = cell1.getX() == cell2.getX()
+				&& cell1.getY() == cell2.getY()
+				&& cell1.isBomb() == cell2.isBomb()
+				&& cell1.isMarked() == cell2.isMarked()
+				&& cell1.isRevealed() == cell2.isRevealed()
+				&& cell1.getNearbyBombs() == cell2.getNearbyBombs();
 		assertTrue(sameCell);
 	}
 
@@ -62,33 +62,34 @@ class TestMinesweeper {
 		sameBoard(game1.getBoard(), game2.getBoard());
 		sameActionList(game1.getActionList(), game2.getActionList());
 		final boolean sameState = game1.getName().equals(game2.getName())
-		&& game1.isFinished() == game2.isFinished()
-		&& game1.getBombsLeft() == game2.getBombsLeft()
-		&& game1.hasLost() == game2.hasLost()
-		;
+				&& game1.isFinished() == game2.isFinished()
+				&& game1.getBombsLeft() == game2.getBombsLeft()
+				&& game1.hasLost() == game2.hasLost();
 		assertTrue(sameState);
 	}
 
 	@Test
 	void testCell() {
-		final Game game = generateGame();
-		final Cell cell = game.getBoard().get(1, 1);
-		game.action(new Action(cell, ActionType.MARK));
-		assertTrue(cell.isMarked());
-		game.action(new Action(cell, ActionType.MARK));
-		assertTrue(!cell.isMarked());
-		game.action(new Action(cell, ActionType.REVEAL));
-		assertTrue(cell.isRevealed());
-		int nearby = cell.getNearbyBombs();
-		for (int x = 0; x < 2; x++) {
-			final int step = x==0 ? 2 : 1;
-			for (int y = 0; y < 2; y+=step) {
-				if (game.getBoard().get(x, y).isBomb()) {
-					nearby--;
+		for (int i = 0; i < testTimes; i++) {
+			final Game game = generateGame();
+			final Cell cell = game.getBoard().get(1, 1);
+			game.action(new Action(cell, ActionType.MARK));
+			assertTrue(cell.isMarked());
+			game.action(new Action(cell, ActionType.MARK));
+			assertTrue(!cell.isMarked());
+			game.action(new Action(cell, ActionType.REVEAL));
+			assertTrue(cell.isRevealed());
+			int nearby = cell.getNearbyBombs();
+			for (int x = 0; x <= 2; x++) {
+				final int step = x == 0 ? 2 : 1;
+				for (int y = 0; y <= 2; y += step) {
+					if (game.getBoard().get(x, y).isBomb()) {
+						nearby--;
+					}
 				}
 			}
+			assertEquals(nearby, 0);
 		}
-		assertEquals(nearby, 0);
 	}
 
 	@Test
@@ -101,43 +102,48 @@ class TestMinesweeper {
 
 	}
 
-	@Test 
+	@Test
 	void testGame() {
 
 	}
 
 	@Test
 	void testStorageGame() {
-		final Game game = generateGame();
-		try {
-			FileStorage.storeGame(game);
-		} catch (IOException e) {
-			fail("IOException was thrown when saving game: " + e.getMessage());
+		for (int i = 0; i < testTimes; i++) {
+			final Game game = generateGame();
+			try {
+				FileStorage.storeGame(game);
+			} catch (IOException e) {
+				fail("IOException was thrown when saving game: " + e.getMessage());
+			}
+			Game second = null;
+			try {
+				second = FileStorage.fetchGame(game.getName(), game.getBoard().getID());
+			} catch (Exception e) {
+				fail("IOException was thrown when fetching game: " + e.getMessage());
+			}
+			assertTrue(FileStorage.deleteGame(game));
+			sameGame(game, second);
 		}
-		Game second = null;
-		try {
-			second = FileStorage.fetchGame(game.getName(), game.getBoard().getID());
-		} catch (Exception e) {
-			fail("IOException was thrown when fetching game: " + e.getMessage());
-		}
-		assertTrue(FileStorage.deleteGame(game));
-		sameGame(game, second);
 	}
 
 	@Test
 	void testStorageBoard() {
-		final Board board = generateBoard();
-		try {
-			FileStorage.storeBoard(board);
-		} catch (Exception e) {
-			fail("IOException was thrown when saving board: " + e.getMessage());
+		for (int i = 0; i < testTimes; i++) {
+			final Board board = generateBoard();
+			try {
+				FileStorage.storeBoard(board);
+			} catch (Exception e) {
+				fail("IOException was thrown when saving board: " + e.getMessage());
+			}
+			Board second = null;
+			try {
+				second = FileStorage.fetchBoard(board.getID());
+			} catch (Exception e) {
+				fail("IOException was thrown when fetching board: " + e.getMessage());
+			}
+			assertTrue(FileStorage.deleteBoard(board));
+			sameBoard(board, second);
 		}
-		Board second = null;
-		try {
-			second = FileStorage.fetchBoard(board.getID());
-		} catch (Exception e) {
-			fail("IOException was thrown when fetching board: " + e.getMessage());
-		}
-		sameBoard(board, second);
 	}
 }

@@ -103,4 +103,16 @@ public class FileStorage {
 		File file = new File(path);
 		return file.delete();
 	}
+
+	public static boolean deleteBoard(final Board board) {
+		final File folder = new File(storage + board.getID());
+		File[] files = folder.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (!file.delete())
+					return false;
+			}
+		}
+		return folder.delete();
+	}
 }
