@@ -99,11 +99,11 @@ public final class Game {
 	}
 
 	private void revealNearby(final Cell cell) {
-		for (int x = -1; x <= 1; x++) {
-			final int step = x == 0 ? 2 : 1; // skip 0,0
-			for (int y = -1; y <= 1; y += step) {
-				final int new_x = cell.getX() + x;
-				final int new_y = cell.getY() + y;
+		for (int dx = -1; dx <= 1; dx++) {
+			final int step = dx == 0 ? 2 : 1; // skip 0,0
+			for (int dy = -1; dy <= 1; dy += step) {
+				final int new_x = cell.getX() + dx;
+				final int new_y = cell.getY() + dy;
 				if (!board.isValid(new_x, new_y))
 					continue;
 				action(new Action(new_x, new_y, ActionType.REVEAL));

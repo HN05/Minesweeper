@@ -138,11 +138,11 @@ public final class BoardGenerator {
 			// Needs to update all cells in 3x3 grid except for itself
 			// Moves in -1 or 1 in every direction
 			// Can think of it like coordinate system with start at -1 and end at 1
-			for (int i = -1; i <= 1; i++) {
-				final int increment = i == 0 ? 2 : 1; // make sure to skip (0,0)
-				for (int j = -1; j <= 1; j += increment) {
-					final int new_x = x + i;
-					final int new_y = y + j;
+			for (int dx = -1; dx <= 1; dx++) {
+				final int increment = dx == 0 ? 2 : 1; // make sure to skip (0,0)
+				for (int dy = -1; dy <= 1; dy += increment) {
+					final int new_x = x + dx;
+					final int new_y = y + dy;
 
 					// Out of bounds checks
 					if (new_x < 0 || new_x >= colCount)

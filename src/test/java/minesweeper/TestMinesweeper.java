@@ -81,7 +81,7 @@ class TestMinesweeper {
 			assertTrue(cell.isRevealed());
 			int nearby = cell.getNearbyBombs();
 			for (int x = 0; x <= 2; x++) {
-				final int step = x == 0 ? 2 : 1;
+				final int step = x == 1 ? 2 : 1;
 				for (int y = 0; y <= 2; y += step) {
 					if (game.getBoard().get(x, y).isBomb()) {
 						nearby--;
