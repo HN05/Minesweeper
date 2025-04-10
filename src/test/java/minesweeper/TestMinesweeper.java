@@ -3,6 +3,8 @@ package minesweeper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -66,6 +68,44 @@ class TestMinesweeper {
 				&& game1.getBombsLeft() == game2.getBombsLeft()
 				&& game1.hasLost() == game2.hasLost();
 		assertTrue(sameState);
+	}
+
+	@Test
+	void testActionList() {
+		for (int i = 0; i < testTimes; i++) {
+			final short colSize = (short) (4 + i);
+			final short rowSize = (short) (7 + i);
+			final ActionList original = new ActionList(colSize, rowSize);
+
+			List<Action> testActions = new ArrayList<>();
+			testActions.add(new Action(3 + i, 5, ActionType.MARK));
+			testActions.add(new Action(3, 2 + i, ActionType.REVEAL));
+			testActions.add(new Action(0, 0, ActionType.MARK));
+			testActions.add(new Action(2 + i, 6 + i, ActionType.REVEAL));
+
+			for (Action action : testActions) {
+				original.addAction(action);
+			}
+
+			assertEquals(testActions.size(), original.getActionCount());
+		
+			// test converting to byte[] and then back
+			final byte[] data = original.getByteData();
+			final ActionList copy = new ActionList(data);
+			assertEquals(original.getActionCount(), copy.getActionCount());
+			
+			// extract actions from copy
+			List<Action> extractedActions = new ArrayList<>();
+			copy.forEachAction(extractedActions::add);
+
+			// compare to original test actions
+			assertEquals(testActions.size(), extractedActions.size());
+			for (int y = 0; y < testActions.size(); y++) {
+				Action orig = testActions.get(y);
+				Action cop = extractedActions.get(y);
+				assertEquals(orig, cop, Integer.toString(i)); // action is record so auto checks all values
+			}
+		}
 	}
 
 	@Test
