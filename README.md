@@ -12,3 +12,4 @@
 
 ### Storage
 Programmet bruker `storage` mappen for å lagre tilstand
+Hvert Board har en egen mappe som består av et tall/id i stigende rekkefølge

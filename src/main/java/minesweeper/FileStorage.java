@@ -19,8 +19,7 @@ public class FileStorage {
 	}
 
 	public static int getNewBoardID() {
-		final File folder = new File(storage);
-		return folder.list().length;
+		return fetchFileStream(storage).mapToInt(Integer::parseInt).max().orElse(0) + 1;
 	}
 
 	public static void storeBoard(final Board board) throws IOException {
