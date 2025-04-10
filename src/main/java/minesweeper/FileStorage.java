@@ -2,7 +2,7 @@ package minesweeper;
 
 import minesweeper.model.ActionList;
 import minesweeper.model.Board;
-import minesweeper.model.BoardGenerator;
+import minesweeper.model.CellGenerator;
 import minesweeper.model.Game;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class FileStorage {
 		}
 		file.createNewFile();
 
-		final byte[] data = BoardGenerator.convertToBytes(board.getCells());
+		final byte[] data = CellGenerator.convertToBytes(board.getCells());
 		try (final FileOutputStream out = new FileOutputStream(file)) {
 			out.write(data);
 		}
@@ -67,7 +67,7 @@ public class FileStorage {
 
 	public static Board fetchBoard(final int id) throws IOException {
 		final String path = storage + id + "/board.bin";
-		return new Board(BoardGenerator.generateCells(getBytes(path)), id);
+		return new Board(CellGenerator.generateCells(getBytes(path)), id);
 	}
 
 	public static Game fetchGame(final String name, final int board) throws IOException {

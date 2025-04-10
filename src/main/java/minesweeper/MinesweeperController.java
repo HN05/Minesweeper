@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import minesweeper.model.Board;
-import minesweeper.model.BoardGenerator;
+import minesweeper.model.CellGenerator;
 import minesweeper.model.Cell;
 import minesweeper.model.Game;
 import minesweeper.model.GameListener;
@@ -102,7 +102,7 @@ public class MinesweeperController implements GameListener {
 
 	private void getNewBoard() {
 		// set config for new boards here, could be ui in future
-		board = new Board(BoardGenerator.generateCells((short) 12, (short) 12, 14));
+		board = new Board(CellGenerator.generateCells((short) 12, (short) 12, 14));
 	}
 
 	private void renderSelectGame() {

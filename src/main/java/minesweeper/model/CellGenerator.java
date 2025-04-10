@@ -6,8 +6,8 @@ import java.util.Random;
 
 // Public funcs use short for colCount and rowCount to ensure correct size
 // Private funcs use int for efficiency
-public final class BoardGenerator {
-	private BoardGenerator() {
+public final class CellGenerator {
+	private CellGenerator() {
 	}
 
 	private static Random rand = new Random();
@@ -63,7 +63,7 @@ public final class BoardGenerator {
 				}
 			}
 		}
-		if (nextByte != 0) {
+		if (nextIndex != data.length) {
 			data[nextIndex] = nextByte;
 		}
 
@@ -71,6 +71,7 @@ public final class BoardGenerator {
 	}
 
 	public static byte[] generateByteGrid(final short rowCount, final short colCount, final int totalBombCount) {
+		// bombCounts larger than amount of cells is fine, all cells will just become bombs
 		if (totalBombCount < 1) {
 			throw new IllegalArgumentException("bombCount must be between greater than 0");
 		}

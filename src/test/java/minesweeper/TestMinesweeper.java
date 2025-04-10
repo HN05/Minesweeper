@@ -11,16 +11,16 @@ import minesweeper.model.Action;
 import minesweeper.model.ActionList;
 import minesweeper.model.ActionType;
 import minesweeper.model.Board;
-import minesweeper.model.BoardGenerator;
+import minesweeper.model.CellGenerator;
 import minesweeper.model.Cell;
 import minesweeper.model.Game;
 
 class TestMinesweeper {
 
-	private final int testTimes = 20; // amount of times to run each test since random inputs
+	private final int testTimes = 100; // amount of times to run each test since random inputs
 
 	private Board generateBoard() {
-		return new Board(BoardGenerator.generateCells((short) 12, (short) 12, 14));
+		return new Board(CellGenerator.generateCells((short) 12, (short) 12, 14));
 	}
 
 	private Game generateGame() {
@@ -93,18 +93,94 @@ class TestMinesweeper {
 	}
 
 	@Test
-	void testBoardGenerator() {
+	void testBoardGeneration() {
+		for (int i = 0; i < testTimes; i++) {
+			final int bombCount = 10 + i;
+			final short size = (short) (4 + i);
+			Board board = new Board(CellGenerator.generateCells(size, (short) (size + i), bombCount));
+			assertEquals(bombCount, board.getBombCount());
+			assertEquals(size, board.getRowCount());
+			assertEquals(size + i, board.getColCount());
 
+			// For each non-bomb cell verify the nearby bomb count and that is valid coord
+			for (Cell cell : board.flatStream().collect(Collectors.toList())) {
+				assertTrue(board.isValid(cell.getX(), cell.getY()));
+				if (!cell.isBomb()) {
+					int expectedNearby = 0;
+					for (int dx = -1; dx <= 1; dx++) {
+						final int step = dx == 0 ? 2 : 1;
+						for (int dy = -1; dy <= 1; dy += step) {
+							int nx = cell.getX() + dx;
+							int ny = cell.getY() + dy;
+							if (board.isValid(nx, ny) && board.get(nx, ny).isBomb()) {
+								expectedNearby++;
+							}
+						}
+					}
+					assertEquals(expectedNearby, cell.getNearbyBombs());
+				}
+			}
+		}
 	}
 
 	@Test
 	void testBoard() {
+		for (int i = 0; i < testTimes; i++) {
+			final Game game = generateGame();
+			final Board board = game.getBoard();
+			// Validate board boundaries.
+			assertTrue(board.isValid(0, 0));
+			assertTrue(board.isValid(board.getColCount() - 1, board.getRowCount() - 1));
+			assertFalse(board.isValid(-1, 0));
+			assertFalse(board.isValid(0, -1));
+			assertFalse(board.isValid(board.getColCount(), 0));
+			assertFalse(board.isValid(0, board.getRowCount()));
 
+			// Change cell state then reset board.
+			game.action(new Action(0, 1, ActionType.MARK));
+			game.action(new Action(1, 0, ActionType.REVEAL));
+
+			board.reset();
+			// Verify all cells are reset.
+			for (Cell c : board.flatStream().collect(Collectors.toList())) {
+				assertFalse(c.isMarked());
+				assertFalse(c.isRevealed());
+			}
+		}
 	}
 
 	@Test
 	void testGame() {
+		for (int i = 0; i < testTimes; i++) {
+			Game game = generateGame();
+			int initialActions = game.getActionCount();
+			boolean actionPerformed = false;
 
+			// Perform an action on a safe cell (non-bomb, non-revealed, non-marked).
+			for (Cell cell : game.getBoard().flatStream().collect(Collectors.toList())) {
+				if (!cell.isBomb() && !cell.isRevealed() && !cell.isMarked()) {
+					game.action(new Action(cell, ActionType.REVEAL));
+					actionPerformed = true;
+					break;
+				}
+			}
+			assertTrue(actionPerformed, "No safe cell found to perform action.");
+			assertTrue(game.getActionCount() > initialActions);
+
+			// Trigger a loss by revealing a bomb cell.
+			for (Cell cell : game.getBoard().flatStream().collect(Collectors.toList())) {
+				if (cell.isBomb() && !cell.isRevealed()) {
+					// Ensure the cell is unmarked before revealing.
+					if (cell.isMarked()) {
+						game.action(new Action(cell, ActionType.MARK));
+					}
+					game.action(new Action(cell, ActionType.REVEAL));
+					break;
+				}
+			}
+			assertTrue(game.hasLost());
+			assertTrue(game.isFinished());
+		}
 	}
 
 	@Test
@@ -123,6 +199,7 @@ class TestMinesweeper {
 				fail("IOException was thrown when fetching game: " + e.getMessage());
 			}
 			assertTrue(FileStorage.deleteGame(game));
+			assertTrue(FileStorage.deleteBoard(game.getBoard()));
 			sameGame(game, second);
 		}
 	}
