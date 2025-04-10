@@ -64,6 +64,8 @@ public final class CellGenerator {
 			}
 		}
 		if (nextIndex != data.length) {
+			int remaining = (rowCount * colCount) % 8;
+			nextByte <<= (8 - remaining);
 			data[nextIndex] = nextByte;
 		}
 
@@ -71,7 +73,8 @@ public final class CellGenerator {
 	}
 
 	public static byte[] generateByteGrid(final short rowCount, final short colCount, final int totalBombCount) {
-		// bombCounts larger than amount of cells is fine, all cells will just become bombs
+		// bombCounts larger than amount of cells is fine, all cells will just become
+		// bombs
 		if (totalBombCount < 1) {
 			throw new IllegalArgumentException("bombCount must be between greater than 0");
 		}
@@ -102,7 +105,7 @@ public final class CellGenerator {
 		// Example: [x1, y1, x2, y2, x3, y3]
 		final List<Integer> bombs = new ArrayList<>();
 
-		byte workingByte = 0; 
+		byte workingByte = 0;
 		for (int y = 0; y < rowCount; y++) {
 			for (int x = 0; x < colCount; x++) {
 				final int cellCount = y * colCount + x;
