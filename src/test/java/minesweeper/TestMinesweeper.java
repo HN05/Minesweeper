@@ -102,7 +102,7 @@ class TestMinesweeper {
 			assertEquals(size, board.getRowCount());
 			assertEquals(size + i, board.getColCount());
 
-			// For each non-bomb cell verify the nearby bomb count and that is valid coord
+			// Verify nearby bomb count and that is valid coord
 			for (Cell cell : board.flatStream().collect(Collectors.toList())) {
 				assertTrue(board.isValid(cell.getX(), cell.getY()));
 				if (!cell.isBomb()) {
@@ -128,7 +128,8 @@ class TestMinesweeper {
 		for (int i = 0; i < testTimes; i++) {
 			final Game game = generateGame();
 			final Board board = game.getBoard();
-			// Validate board boundaries.
+
+			// Validate board boundaries
 			assertTrue(board.isValid(0, 0));
 			assertTrue(board.isValid(board.getColCount() - 1, board.getRowCount() - 1));
 			assertFalse(board.isValid(-1, 0));
@@ -136,12 +137,12 @@ class TestMinesweeper {
 			assertFalse(board.isValid(board.getColCount(), 0));
 			assertFalse(board.isValid(0, board.getRowCount()));
 
-			// Change cell state then reset board.
+			// Change cell state then reset board
 			game.action(new Action(0, 1, ActionType.MARK));
 			game.action(new Action(1, 0, ActionType.REVEAL));
-
 			board.reset();
-			// Verify all cells are reset.
+
+			// Verify all cells are reset
 			for (Cell c : board.flatStream().collect(Collectors.toList())) {
 				assertFalse(c.isMarked());
 				assertFalse(c.isRevealed());
@@ -156,7 +157,7 @@ class TestMinesweeper {
 			int initialActions = game.getActionCount();
 			boolean actionPerformed = false;
 
-			// Perform an action on a safe cell (non-bomb, non-revealed, non-marked).
+			// Perform an action on a safe cell
 			for (Cell cell : game.getBoard().flatStream().collect(Collectors.toList())) {
 				if (!cell.isBomb() && !cell.isRevealed() && !cell.isMarked()) {
 					game.action(new Action(cell, ActionType.REVEAL));
@@ -164,13 +165,13 @@ class TestMinesweeper {
 					break;
 				}
 			}
-			assertTrue(actionPerformed, "No safe cell found to perform action.");
+			assertTrue(actionPerformed); // no found safe cell
 			assertTrue(game.getActionCount() > initialActions);
 
-			// Trigger a loss by revealing a bomb cell.
+			// Trigger a loss by revealing a bomb cell
 			for (Cell cell : game.getBoard().flatStream().collect(Collectors.toList())) {
 				if (cell.isBomb() && !cell.isRevealed()) {
-					// Ensure the cell is unmarked before revealing.
+					// Ensure unmarked before revealing
 					if (cell.isMarked()) {
 						game.action(new Action(cell, ActionType.MARK));
 					}

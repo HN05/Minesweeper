@@ -63,7 +63,9 @@ public final class CellGenerator {
 				}
 			}
 		}
+		// check if there is partial byte
 		if (nextIndex != data.length) {
+			// shift the byte
 			int remaining = (rowCount * colCount) % 8;
 			nextByte <<= (8 - remaining);
 			data[nextIndex] = nextByte;
