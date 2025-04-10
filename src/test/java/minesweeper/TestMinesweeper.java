@@ -71,11 +71,28 @@ class TestMinesweeper {
 
 	@Test
 	void testCell() {
-
+		final Game game = generateGame();
+		final Cell cell = game.getBoard().get(1, 1);
+		game.action(new Action(cell, ActionType.MARK));
+		assertTrue(cell.isMarked());
+		game.action(new Action(cell, ActionType.MARK));
+		assertTrue(!cell.isMarked());
+		game.action(new Action(cell, ActionType.REVEAL));
+		assertTrue(cell.isRevealed());
+		int nearby = cell.getNearbyBombs();
+		for (int x = 0; x < 2; x++) {
+			final int step = x==0 ? 2 : 1;
+			for (int y = 0; y < 2; y+=step) {
+				if (game.getBoard().get(x, y).isBomb()) {
+					nearby--;
+				}
+			}
+		}
+		assertEquals(nearby, 0);
 	}
 
 	@Test
-	void actionList() {
+	void testBoardGenerator() {
 
 	}
 

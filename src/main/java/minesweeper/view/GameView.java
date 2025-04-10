@@ -78,7 +78,7 @@ public class GameView {
 				final Button button = new Button();
 				button.setPrefSize(gridSize, gridSize);
 				button.setStyle("-fx-background-radius: 0;");
-				final Action action = new Action(x, y, isMarking ? ActionType.MARK : ActionType.REVEAL);
+				final Action action = new Action(x, y, ActionType.get(isMarking));
 				button.setOnAction(e -> performAction.accept(action, actionCount));
 				renderCell(board.get(x, y), button);
 				grid.add(button, x, y);
