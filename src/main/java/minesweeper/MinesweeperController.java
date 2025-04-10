@@ -205,6 +205,7 @@ public class MinesweeperController implements GameListener {
 		if (!game.isFinished()) {
 			storeGame();
 		}
+		board.reset();
 		game = null;
 		gameView = null;
 	}

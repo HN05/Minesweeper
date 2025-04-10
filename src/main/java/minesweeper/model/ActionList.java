@@ -6,32 +6,29 @@ import java.util.function.Consumer;
 
 public final class ActionList {
     private final List<Byte> actions;
-    private final int xBitSize;
     private final int yBitSize;
+    private final int xBitSize;
     private final int actionBitSize;
     private int actionCount = 0;
 
     public ActionList(final short colSize, final short rowSize) {
         this.actions = new ArrayList<>();
-        actions.add((byte) (colSize >>> 8));
-        actions.add((byte) (colSize));
-        actions.add((byte) (rowSize >>> 8));
-        actions.add((byte) (rowSize));
-
-        this.yBitSize = requiredSize(colSize);
-        this.xBitSize = requiredSize(rowSize);
-        this.actionBitSize = xBitSize + yBitSize + 1;
+        this.xBitSize = requiredSize(colSize);
+        this.yBitSize = requiredSize(rowSize);
+		actions.add((byte) xBitSize);
+		actions.add((byte) yBitSize);
+        this.actionBitSize = yBitSize + xBitSize + 1;
     }
 
     public ActionList(final byte[] byteData) {
-        yBitSize = requiredSize((usign(byteData[0]) << 8) + usign(byteData[1]));
-        xBitSize = requiredSize((usign(byteData[2]) << 8) + usign(byteData[3]));
-        actionBitSize = xBitSize + yBitSize + 1;
+		xBitSize = usign(byteData[0]);
+		yBitSize = usign(byteData[1]);
+        actionBitSize = yBitSize + xBitSize + 1;
         actions = new ArrayList<>();
         for (byte element : byteData) {
             actions.add(element);
         }
-		actionCount = (byteData.length * 8 - 32) / actionBitSize;
+		actionCount = (byteData.length * 8 - 16) / actionBitSize;
     }
     
     // returns an int that is unsigned
@@ -58,8 +55,8 @@ public final class ActionList {
 	}
 
     public void addAction(final Action action) {
-        // First 32 bits (4*8) are metadata
-        int bitNum = 32 + actionBitSize * actionCount;
+        // First 16 bits (2*8) are metadata
+        int bitNum = 16 + actionBitSize * actionCount;
         int actionIndex = 0;
         while (actionIndex < actionBitSize) {
             final int num = bitNum % 8; // Pos in the byte
@@ -75,12 +72,12 @@ public final class ActionList {
             if (actionIndex == 0) {
                 // Bit is type
                 bit = action.type().isMark() ? 1 : 0;
-            } else if (actionIndex <= yBitSize) {
+            } else if (actionIndex <= xBitSize) {
                 // Bit is part of x coord
-                bit = action.x() >>> (yBitSize - actionIndex);
+                bit = action.x() >>> (xBitSize - actionIndex);
             } else {
                 // Bit is part of y coord
-                bit = action.y() >>> ((xBitSize - (actionIndex - yBitSize)));
+                bit = action.y() >>> ((yBitSize - (actionIndex - xBitSize)));
             }
             // left shift bit to align
             // add the bit val (use bitwise or for safety)
@@ -128,13 +125,13 @@ public final class ActionList {
 
     public void forEachAction(Consumer<Action> consumer) {
         for (int i = 0; i < actionCount; i++) {
-            int bitNum = 32 + i * actionBitSize;
+            int bitNum = 16 + i * actionBitSize;
             final boolean isMark = extract(bitNum, 1) == 1;
             bitNum++;
 
-            final int x = extract(bitNum, yBitSize);
-            bitNum += yBitSize;
-            final int y = extract(bitNum, xBitSize);
+            final int x = extract(bitNum, xBitSize);
+            bitNum += xBitSize;
+            final int y = extract(bitNum, yBitSize);
 
             final Action action = new Action(x, y, ActionType.get(isMark));
             consumer.accept(action);
