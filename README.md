@@ -63,7 +63,7 @@ Appen bruker MVC (Model-View-Controller):
 - **View** bestemmer hvordan noe skal vises for brukeren, altså farger, knapper, tekst og lignende. 
 
 Når brukeren interagerer med ui-et så kaller viewet en lambda funksjon fra controlleren, og controlleren bestemmer seg da for hva den vil gjøre, og om den vil si ifra til modellen.   
-Når modellen endrer seg så sier den ifra til controlleren, som bestemmer seg for hva den skal gjøre, den kan for eksempel tegne gridden på nytt med å kalle renderGrid på GameView.
+Når modellen endrer seg så sier den ifra til controlleren, som bestemmer seg for hva den skal gjøre, den kan for eksempel tegne gridden på nytt med å kalle renderGrid på GameView.  
 Selve layouten er spesifisert i en App.fxml fil, det hadde nok vært bedre å ha flere av de, i hvert fall en egen for valg av brett/spill, siden det er blitt litt rotete i den filen. Noe annet som kunne ha vært bedre er å la viewene ha referansene til komponentene i fxml filen, siden slik jeg har satt det opp så bruker controlleren aldri (med noen få unntak) disse referansene, og sender de heller i kall til de forskjellige viewene.  
 
 Under ser du hvordan model, view og controller interagerer med hverandre
@@ -71,6 +71,4 @@ Under ser du hvordan model, view og controller interagerer med hverandre
 
 
 ### Testing av appen
-Testene er skrevet når appen var så og si ferdig, siden i tidligere versjoner av appen så var det mye endring og refactorering, og testene måtte da også ha blitt endret, så jeg valgte å skrive testene når appen var i en nesten ferdigstilt tilstand.  
-Jeg har valgt å kjøre de fleste tester et vilkårlig (satt til 100 nå) ganger, fordi generering av brett er tilfeldig, for jeg har hatt en del bugs som bare oppsto rundt 30% av tiden, så dette hjelper med å fange opp de.  
-Testene fokuserer utelukkende på modellen og fillagring siden det er vanskelig å teste ui/controller. Testene dekker mesteparten av modellen og fillagringen, men jeg har fokusert på det som er mest utsatt for feil, så veldig enkle ting som `Action` og `ActionType` klassene er ikke testet eksplisitt, men siden de andre testene er så omfattende så vil nok selv en liten feil in den enkle delen av modellen forårsake at en eller flere tester feiler.
+Testene er skrevet når appen var så og si ferdig, siden i tidligere versjoner av appen så var det mye endring og refactorering, og testene måtte da også ha blitt endret, så jeg valgte å skrive testene når appen var i en nesten ferdigstilt tilstand. Jeg har valgt å kjøre de fleste tester et vilkårlig (satt til 100 nå) ganger, fordi generering av brett er tilfeldig, for jeg har hatt en del bugs som bare oppsto rundt 30% av tiden, så dette hjelper med å fange opp de. Testene fokuserer utelukkende på modellen og fillagring siden det er vanskelig å teste ui/controller. Testene dekker mesteparten av modellen og fillagringen, men jeg har fokusert på det som er mest utsatt for feil, så veldig enkle ting som `Action` og `ActionType` klassene er ikke testet eksplisitt, men siden de andre testene er så omfattende så vil nok selv en liten feil in den enkle delen av modellen forårsake at en eller flere tester feiler.
