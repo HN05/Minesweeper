@@ -64,7 +64,8 @@ Appen bruker MVC (Model-View-Controller):
 
 Når brukeren interagerer med ui-et så kaller viewet en lambda funksjon fra controlleren, og controlleren bestemmer seg da for hva den vil gjøre, og om den vil si ifra til modellen.   
 Når modellen endrer seg så sier den ifra til controlleren, som bestemmer seg for hva den skal gjøre, den kan for eksempel tegne gridden på nytt med å kalle renderGrid på GameView.
-Selve layouten er spesifisert i en App.fxml fil, det hadde nok vært bedre å ha flere av de, i hvert fall en egen for valg av brett/spill, siden det er blitt litt rotete i den filen. Noe annet som kunne ha vært bedre er å la viewene ha referansene til komponentene i fxml filen, siden slik jeg har satt det opp så bruker controlleren aldri (med noen få unntak) disse referansene, og sender de heller i kall til de forskjellige viewene. 
+Selve layouten er spesifisert i en App.fxml fil, det hadde nok vært bedre å ha flere av de, i hvert fall en egen for valg av brett/spill, siden det er blitt litt rotete i den filen. Noe annet som kunne ha vært bedre er å la viewene ha referansene til komponentene i fxml filen, siden slik jeg har satt det opp så bruker controlleren aldri (med noen få unntak) disse referansene, og sender de heller i kall til de forskjellige viewene.  
+
 Under ser du hvordan model, view og controller interagerer med hverandre
 ![Sekvensdiagram av mvc](mvc.png)
 
