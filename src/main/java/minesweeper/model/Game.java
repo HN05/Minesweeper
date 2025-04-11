@@ -90,9 +90,9 @@ public final class Game {
 		}
 		final boolean allRevealead = board
 				.flatStream()
-				.filter(c -> !c.isRevealed())
+				.filter(c -> !c.isRevealed() && !c.isMarked())
 				.count() == 0;
-
+		
 		if (allRevealead) {
 			isFinished = true;
 		}

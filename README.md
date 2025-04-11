@@ -6,7 +6,7 @@ Dokumentet er formatert for github sin markdown syntax, hvis det er uleselig kan
 - Ha siste/nylig versjon av java installert
 - Installer maven (mvn)
 - Sjekk at `storage` mappen eksisterer i roten av programmet, hvis ikke, så opprett den
-- Kjør `mvn javafx:run` in roten av prosjektet (mac)
+- Kjør `mvn clean javafx:run` in roten av prosjektet (mac)
 
 ## Beskrivelse av appen
 
