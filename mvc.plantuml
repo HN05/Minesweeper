@@ -1,0 +1,48 @@
+@startuml
+actor User
+participant "GameView" as View
+participant "MinesweeperController" as Controller
+participant "Game" as Game
+
+
+== User clicks a cell ==
+
+User -> View : clicks cell in UI
+View -> Controller : (action, count) -> ...
+note right of View
+    Button click triggers lambda:
+    Controller calls game.action()
+end note
+
+== Controller processes click ==
+
+Controller -> Game : action(action)
+Game -> Game : increment pendingActions
+Game -> Game : process cell (mark/reveal)
+alt additional reveals triggered
+    Game -> Game : increment pendingActions
+    Game -> Game : action(action)
+    Game -> Game : decrement pendingActions
+    Game -> Controller : updatedCell(cell)
+    note right of Controller
+        Ignored since pendingActions != 0
+end note
+end
+Game -> Game : decrement pendingActions
+Game -> Controller : updatedCell(cell)
+
+== Renders new view ==
+Controller -> Controller : render()
+Controller -> Controller : renderGameView()
+Controller -> View : renderGrid(), renderBombCount(), etc.
+
+== If game ends ==
+
+Game -> Game : checkIfWon()
+alt game.isFinished
+    Game -> Controller : updatedGameState()
+    Controller -> View : renderEndScreen(...)
+    Controller -> Controller : exitGame()
+end
+
+@enduml
