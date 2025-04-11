@@ -18,7 +18,7 @@
 > - Hvis den er en bombe så vil du tape
 > - Du vinner når du har markert eller revealet alle ruter uten å treffe en bombe
 
-> [!INFO]
+> [!NOTE]
 > Når du starter appen:
 >
 > • Du må først velge et brett – dette definerer antall ruter og hvor bombene er  
