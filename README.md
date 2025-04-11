@@ -53,9 +53,10 @@ Dokumentet er formatert for github sin markdown syntax, hvis det er uleselig kan
 ### Deler av pensum som er dekket
 
 ### Deler av pensum som er ikke er dekket
+Jeg har ikke brukt arv noen steder i appen (utenom javafx app klassen), dette er fordi det ikke var noen passende steder for arv, delegering og interfaces er mye mer passende for appen etter min mening. Jeg har derfor heller ikke brukt abstrakte klasser, siden du må ha arv for at de skal være noe brukbar. 
 
 ### MVC
-Appen bruker MVC (model, view, controller)
+Appen bruker MVC (model, view, controller)  
 Under ser du hvordan model, view og controller interagerer med hverandre
 ![Sekvensdiagram av mvc](mvc.png)
 
