@@ -8,7 +8,7 @@
 
 ## Beskrivelse av appen
 
-> **Note**
+> [!NOTE]
 > Appen følger de samme reglene som vanlig minesweeper:
 > - Spillet består av et rutenett hvor noen ruter er bomber
 > - Hvis du tror en rute er en bombe, så kan du markere den med et flagg
