@@ -45,22 +45,29 @@ Dokumentet er formatert for github sin markdown syntax, hvis det er uleselig kan
 - All kildekoden ligger her
 - I `test` mappen ligger alle testene
 - I `main` mappen ligger all koden for selve programmet
-- I `main` mappen er det en `java` mappe for java koden, og en `resources` mappe for ressurser som bilder og xml for ui
+- I `main` mappen er det en `java` mappe for java koden, og en `resources` mappe for ressurser som bilder og fxml for ui
 
 
 ## Teknisk info om appen
 
 ### Deler av pensum som er dekket
-Store deler av pensum er dekket av appen, det er blant annet brukt observatør-observert arkitekturen mellom modellen og controlleren, så modellen alerter controlleren når den oppdateres, slik at controlleren kan oppdatere viewet. Delegering er også mye brukt, som `FileStorage` klassen, hvor all filhåndtering delegeres til den fra controlleren, eller `CellGenerator` som generer celler for forskjellige klasser.
+Store deler av pensum er dekket av appen, det er blant annet brukt observatør-observert arkitekturen mellom modellen og controlleren, så modellen alerter controlleren når den oppdateres, slik at controlleren kan oppdatere viewet. Delegering er også mye brukt, som `FileStorage` klassen, hvor all filhåndtering delegeres til den fra controlleren, eller `CellGenerator` som generer celler for forskjellige klasser. Jeg har også brukt konseptet **records** for `Action` klassen, siden det gir automatisk innkapsling on andre ønskelige funksjoner for immutabel (uforanderlig) data.
 
 ### Deler av pensum som er ikke er dekket
 Jeg har ikke brukt arv noen steder i appen (utenom javafx app klassen), dette er fordi det ikke var noen passende steder for arv, delegering og interfaces er mye mer passende for appen etter min mening. Jeg har derfor heller ikke brukt abstrakte klasser, siden du må ha arv for at de skal være noe brukbar. Noe jeg kunne ha brukt er optionals, det er flere steder i appen hvor det er valid at verdiene er null, som `error` i `GameSelectView`, men jeg har valgt å ikke bruke optionals siden de er best brukt som returverdier for metoder/funksjoner for å signalisere at verdien kan være null. 
 
 ### MVC
-Appen bruker MVC (model, view, controller)  
+Appen bruker MVC (Model-View-Controller):
+- **Modellen** inneholder data og logikk for selve spillet
+- **Controlleren** bestemmer hva og når noe skal vises, og knytter modellen sammen med viewet 
+- **View** bestemmer hvordan noe skal vises for brukeren, altså farger, knapper, tekst og lignende. 
 
+Når brukeren interagerer med ui-et så kaller viewet en lambda funksjon fra controlleren, og controlleren bestemmer seg da for hva den vil gjøre, og om den vil si ifra til modellen.   
+Når modellen endrer seg så sier den ifra til controlleren, som bestemmer seg for hva den skal gjøre, den kan for eksempel tegne gridden på nytt med å kalle renderGrid på GameView.
+Selve layouten er spesifisert i en App.fxml fil, det hadde nok vært bedre å ha flere av de, i hvert fall en egen for valg av brett/spill, siden det er blitt litt rotete i den filen. Noe annet som kunne ha vært bedre er å la viewene ha referansene til komponentene i fxml filen, siden slik jeg har satt det opp så bruker controlleren aldri (med noen få unntak) disse referansene, og sender de heller i kall til de forskjellige viewene. 
 Under ser du hvordan model, view og controller interagerer med hverandre
 ![Sekvensdiagram av mvc](mvc.png)
 
 
 ### Testing av appen
+Testene er skrevet når appen var så og si ferdig, siden i tidligere versjoner av appen så var det mye endring og refactorering, og testene måtte da også ha blitt endret, så jeg valgte å skrive testene når appen var i en nesten ferdigstilt tilstand.
