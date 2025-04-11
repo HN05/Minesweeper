@@ -53,7 +53,7 @@ Dokumentet er formatert for github sin markdown syntax, hvis det er uleselig kan
 ### Deler av pensum som er dekket
 
 ### Deler av pensum som er ikke er dekket
-Jeg har ikke brukt arv noen steder i appen (utenom javafx app klassen), dette er fordi det ikke var noen passende steder for arv, delegering og interfaces er mye mer passende for appen etter min mening. Jeg har derfor heller ikke brukt abstrakte klasser, siden du må ha arv for at de skal være noe brukbar. 
+Jeg har ikke brukt arv noen steder i appen (utenom javafx app klassen), dette er fordi det ikke var noen passende steder for arv, delegering og interfaces er mye mer passende for appen etter min mening. Jeg har derfor heller ikke brukt abstrakte klasser, siden du må ha arv for at de skal være noe brukbar. Noe jeg kunne ha brukt er optionals, det er flere steder i appen hvor det er valid at verdiene er null, som `error` i `GameSelectView`, men jeg har valgt å ikke bruke optionals siden de er best brukt som returverdier for metoder/funksjoner for å signalisere at verdien kan være null. 
 
 ### MVC
 Appen bruker MVC (model, view, controller)  

@@ -1,7 +1,6 @@
 package minesweeper.view;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import javafx.scene.control.Button;
@@ -10,7 +9,7 @@ import javafx.scene.layout.VBox;
 
 public class GameSelectView {
 
-	private Optional<String> error = Optional.empty();
+	private String error = null;
 
 	public void renderSelectBoard(final int[] boards, final Label title, final VBox container,
 			final Consumer<Integer> accept) {
@@ -50,10 +49,12 @@ public class GameSelectView {
 	}
 
 	public void renderErrorLabel(final Label label) {
-		error.ifPresent(error -> label.setText(error));
+		if (error == null) {
+			label.setText(error);
+		}
 	}
 
 	public void setError(final String error) {
-		this.error = Optional.ofNullable(error);
+		this.error = error;
 	}
 }
