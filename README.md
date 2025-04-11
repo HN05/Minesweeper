@@ -19,7 +19,7 @@
 > - Du vinner når du har markert eller revealet alle ruter uten å treffe en bombe
 
 > [!NOTE]
-> Når du starter appen:
+> **Når du starter appen:**
 >
 > • Du må først velge et brett – dette definerer antall ruter og hvor bombene er  
 > • Deretter velger du et spill – et spill er et forsøk på å vinne brettet (dvs. en logg over aksjoner)  
