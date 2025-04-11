@@ -51,12 +51,14 @@ Dokumentet er formatert for github sin markdown syntax, hvis det er uleselig kan
 ## Teknisk info om appen
 
 ### Deler av pensum som er dekket
+Store deler av pensum er dekket av appen, det er blant annet brukt observatør-observert arkitekturen mellom modellen og controlleren, så modellen alerter controlleren når den oppdateres, slik at controlleren kan oppdatere viewet. Delegering er også mye brukt, som `FileStorage` klassen, hvor all filhåndtering delegeres til den fra controlleren, eller `CellGenerator` som generer celler for forskjellige klasser.
 
 ### Deler av pensum som er ikke er dekket
 Jeg har ikke brukt arv noen steder i appen (utenom javafx app klassen), dette er fordi det ikke var noen passende steder for arv, delegering og interfaces er mye mer passende for appen etter min mening. Jeg har derfor heller ikke brukt abstrakte klasser, siden du må ha arv for at de skal være noe brukbar. Noe jeg kunne ha brukt er optionals, det er flere steder i appen hvor det er valid at verdiene er null, som `error` i `GameSelectView`, men jeg har valgt å ikke bruke optionals siden de er best brukt som returverdier for metoder/funksjoner for å signalisere at verdien kan være null. 
 
 ### MVC
 Appen bruker MVC (model, view, controller)  
+
 Under ser du hvordan model, view og controller interagerer med hverandre
 ![Sekvensdiagram av mvc](mvc.png)
 

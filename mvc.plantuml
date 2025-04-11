@@ -10,8 +10,7 @@ participant "Game" as Game
 User -> View : clicks cell in UI
 View -> Controller : (action, count) -> ...
 note right of View
-    Button click triggers lambda:
-    Controller calls game.action()
+	Button click triggers lambda from controller
 end note
 
 == Controller processes click ==
