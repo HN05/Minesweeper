@@ -2,7 +2,8 @@
 # Edit at https://www.gitignore.io/?templates=java,maven,eclipse,intellij+all,visualstudiocode
 
 .metadata
-storage/
+/storage/*
+!/storage/.gitkeep
 bin/
 tmp/
 *.tmp

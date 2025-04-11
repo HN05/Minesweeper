@@ -1,5 +1,7 @@
 # Minesweeper
 
+Dokumentet er formatert for github sin markdown syntax, hvis det er uleselig kan du lese dette dokumentet her [github](https://github.com/HN05/Minesweeper)
+
 ## Hvordan kjøre
 - Ha siste/nylig versjon av java installert
 - Installer maven (mvn)
@@ -9,7 +11,7 @@
 ## Beskrivelse av appen
 
 > [!IMPORTANT]
-> Appen følger de samme reglene som vanlig minesweeper:
+> **Appen følger de samme reglene som vanlig minesweeper:**
 > - Spillet består av et rutenett hvor noen ruter er bomber
 > - Hvis du tror en rute er en bombe, så kan du markere den med et flagg
 > - Dette vil automatisk dekrementere 'Bombs left' uavhengig om det faktisk er en bombe
@@ -29,10 +31,6 @@
 > • Ferdigspilte spill slettes automatisk (uansett om du vinner eller taper)  
 > • Det finnes ikke UI for å slette brett eller spill manuelt
 
-### MVC
-Under ser du hvordan model, view og controller interagerer med hverandre
-![Sekvensdiagram av mvc](mvc.png)
-
 ## Mappestruktur
 
 ### Storage
@@ -48,4 +46,9 @@ Under ser du hvordan model, view og controller interagerer med hverandre
 - I `test` mappen ligger alle testene
 - I `main` mappen ligger all koden for selve programmet
 - I `main` mappen er det en `java` mappe for java koden, og en `resources` mappe for ressurser som bilder og xml for ui
+
+
+### MVC
+Under ser du hvordan model, view og controller interagerer med hverandre
+![Sekvensdiagram av mvc](mvc.png)
 
