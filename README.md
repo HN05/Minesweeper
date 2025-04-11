@@ -8,7 +8,7 @@
 
 ## Beskrivelse av appen
 
-> [!NOTE]
+> [!IMPORTANT]
 > Appen følger de samme reglene som vanlig minesweeper:
 > - Spillet består av et rutenett hvor noen ruter er bomber
 > - Hvis du tror en rute er en bombe, så kan du markere den med et flagg
@@ -18,7 +18,16 @@
 > - Hvis den er en bombe så vil du tape
 > - Du vinner når du har markert eller revealet alle ruter uten å treffe en bombe
 
-Når du først launcher appen vil du måtte velge et brett, dette er selve brettet du spiller på, altså antall ruter, og hvor bombene er. Du må deretter velge et spill på dette brettet, som er et forsøk på å vinne brettet, altså en liste med aksjoner (reveal/mark) du har tatt på det valgte brettet. Når du oppretter et brett vil det automatisk lagres som et heltall, den vil velge det eksisterende brettet med det høyeste tallet (0 hvis ingen eksisterer) + 1. Når du oppretter et spill vil det automatisk lagres som det tidspuktet du opprettet spillet på Det er ikke noe ui for å slette verken brett eller spill (fikk ikke tid), men spill slettes automatisk etter de er ferdigspilt (tap eller seier).
+> [!INFO]
+> Når du starter appen:
+>
+> • Du må først velge et brett – dette definerer antall ruter og hvor bombene er  
+> • Deretter velger du et spill – et spill er et forsøk på å vinne brettet (dvs. en logg over aksjoner)  
+> • Nye brett får automatisk et ID-nummer: høyeste eksisterende + 1 (starter på 1)  
+> • Nye spill navngis automatisk med tidspunktet de ble opprettet  
+> • Spillet lagres automatisk etter hver aksjon du utfører  
+> • Ferdigspilte spill slettes automatisk (uansett om du vinner eller taper)  
+> • Det finnes ikke UI for å slette brett eller spill manuelt
 
 ### MVC
 Under ser du hvordan model, view og controller interagerer med hverandre
