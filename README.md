@@ -48,7 +48,16 @@ Dokumentet er formatert for github sin markdown syntax, hvis det er uleselig kan
 - I `main` mappen er det en `java` mappe for java koden, og en `resources` mappe for ressurser som bilder og xml for ui
 
 
+## Teknisk info om appen
+
+### Deler av pensum som er dekket
+
+### Deler av pensum som er ikke er dekket
+
 ### MVC
+Appen bruker MVC (model, view, controller)
 Under ser du hvordan model, view og controller interagerer med hverandre
 ![Sekvensdiagram av mvc](mvc.png)
 
+
+### Testing av appen
