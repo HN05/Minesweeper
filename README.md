@@ -71,4 +71,6 @@ Under ser du hvordan model, view og controller interagerer med hverandre
 
 
 ### Testing av appen
-Testene er skrevet når appen var så og si ferdig, siden i tidligere versjoner av appen så var det mye endring og refactorering, og testene måtte da også ha blitt endret, så jeg valgte å skrive testene når appen var i en nesten ferdigstilt tilstand.
+Testene er skrevet når appen var så og si ferdig, siden i tidligere versjoner av appen så var det mye endring og refactorering, og testene måtte da også ha blitt endret, så jeg valgte å skrive testene når appen var i en nesten ferdigstilt tilstand.  
+Jeg har valgt å kjøre de fleste tester et vilkårlig (satt til 100 nå) ganger, fordi generering av brett er tilfeldig, for jeg har hatt en del bugs som bare oppsto rundt 30% av tiden, så dette hjelper med å fange opp de.  
+Testene fokuserer utelukkende på modellen og fillagring siden det er vanskelig å teste ui/controller. Testene dekker mesteparten av modellen og fillagringen, men jeg har fokusert på det som er mest utsatt for feil, så veldig enkle ting som `Action` og `ActionType` klassene er ikke testet eksplisitt, men siden de andre testene er så omfattende så vil nok selv en liten feil in den enkle delen av modellen forårsake at en eller flere tester feiler.
