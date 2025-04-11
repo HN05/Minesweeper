@@ -106,12 +106,12 @@ public final class Game {
 				final int new_y = cell.getY() + dy;
 				if (!board.isValid(new_x, new_y))
 					continue;
-				action(new Action(new_x, new_y, ActionType.REVEAL));
+				action(new Action(new_x, new_y, ActionType.REVEAL), false);
 			}
 		}
 	}
 
-	private void reveal(final Cell cell, final boolean cascade) {
+	private void reveal(final Cell cell) {
 		if (cell.isRevealed() || cell.isMarked())
 			return;
 
@@ -122,7 +122,7 @@ public final class Game {
 			return;
 		}
 
-		if (cell.getNearbyBombs() == 0 && cascade) {
+		if (cell.getNearbyBombs() == 0) {
 			revealNearby(cell);
 		}
 	}
@@ -147,7 +147,7 @@ public final class Game {
 		if (action.type().isMark()) {
 			mark(cell);
 		} else {
-			reveal(cell, addToList);
+			reveal(cell);
 		}
 		if (addToList) {
 			actionList.addAction(action);
